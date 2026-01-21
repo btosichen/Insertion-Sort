@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>插入排序法大挑戰 | Insertion Sort Challenge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .card-shadow { box-shadow: 4px 4px 0px 0px rgba(0,0,0,0.2); }
+        .card-active { transform: translateY(-10px) scale(1.05); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); border-color: #FBBF24; border-width: 4px; }
+        .transition-all-300 { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .pop-in { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        
+        .slot-highlight { background-color: #FEF3C7; border: 2px dashed #F59E0B; }
+        .sorted-bg { background-color: #D1FAE5; border: 2px solid #10B981; }
+        .unsorted-bg { background-color: #F3F4F6; border: 2px dashed #9CA3AF; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800 selection:bg-yellow-200">
+
+    <!-- Navbar -->
+    <nav class="bg-indigo-600 text-white p-4 sticky top-0 z-50 shadow-lg border-b-4 border-indigo-800">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <span class="text-3xl">🃏</span>
+                <h1 class="text-2xl font-black tracking-wider">插入排序法大挑戰</h1>
+            </div>
+            <div class="flex gap-2 bg-indigo-700 p-1 rounded-lg">
+                <button onclick="switchTab('learn')" id="btn-learn" class="tab-btn px-4 py-2 rounded font-bold transition-all bg-yellow-400 text-indigo-900 shadow-md transform scale-105">教學區</button>
+                <button onclick="switchTab('play')" id="btn-play" class="tab-btn px-4 py-2 rounded font-bold transition-all hover:bg-indigo-500 text-indigo-100">互動闖關</button>
+                <button onclick="switchTab('practice')" id="btn-practice" class="tab-btn px-4 py-2 rounded font-bold transition-all hover:bg-indigo-500 text-indigo-100">隨堂練習</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto p-4 md:p-6 pb-20">
+
+        <!-- SECTION 1: LEARN -->
+        <div id="view-learn" class="view-section space-y-6">
+            <!-- Concept Cards -->
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="bg-white p-5 rounded-xl border-2 border-indigo-100 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-indigo-600 mb-2"><i data-lucide="brain-circuit" class="w-8 h-8"></i></div>
+                    <h3 class="text-lg font-bold mb-2">什麼是插入排序？</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">就像整理撲克牌！把牌分成「已排序」和「未排序」，每次拿一張未排序的牌，插進已排序的正確位置。</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl border-2 border-indigo-100 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-pink-500 mb-2"><i data-lucide="list-ordered" class="w-8 h-8"></i></div>
+                    <h3 class="text-lg font-bold mb-2">三大規則口訣</h3>
+                    <ol class="list-decimal list-inside text-slate-600 text-sm space-y-1">
+                        <li><span class="font-bold text-emerald-600">最前端</span>先當已排序</li>
+                        <li>拿<span class="font-bold text-gray-500">未排序</span>第 1 個當 Key</li>
+                        <li>從<span class="font-bold text-indigo-600">右往左</span>比，插進正確位置</li>
+                    </ol>
+                </div>
+                <div class="bg-white p-5 rounded-xl border-2 border-indigo-100 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-emerald-500 mb-2"><i data-lucide="play-circle" class="w-8 h-8"></i></div>
+                    <h3 class="text-lg font-bold mb-2">演算法邏輯</h3>
+                    <div class="bg-slate-800 text-green-400 p-2 rounded text-xs font-mono overflow-x-auto">
+                        <p>for i = 1 to n-1</p>
+                        <p class="pl-2">key = A[i]</p>
+                        <p class="pl-2">while j >= 0 and A[j] > key</p>
+                        <p class="pl-4">A[j+1] = A[j] (右移)</p>
+                        <p class="pl-2">A[j+1] = key (插入)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Demo Stage -->
+            <div class="bg-white p-6 rounded-2xl shadow-lg border-2 border-slate-200">
+                <div class="flex justify-between items-center mb-6 border-b pb-4">
+                    <h2 class="text-xl font-bold text-slate-700 flex items-center gap-2">
+                        <i data-lucide="monitor-play"></i> 
+                        動畫演示 (Demo)
+                    </h2>
+                    <div class="flex gap-2">
+                        <button onclick="resetDemo()" class="bg-slate-200 hover:bg-slate-300 px-3 py-1 rounded text-sm font-bold text-slate-700 transition-colors">重新開始</button>
+                        <button id="demo-play-btn" onclick="toggleDemoAutoPlay()" class="bg-emerald-500 hover:bg-emerald-600 px-4 py-1 rounded text-sm font-bold text-white transition-colors flex items-center gap-1">
+                            <i data-lucide="play" class="w-4 h-4"></i> 播放
+                        </button>
+                        <button onclick="stepDemo()" class="bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded text-sm font-bold text-white transition-colors">下一步</button>
+                    </div>
+                </div>
+
+                <!-- Explanation Box -->
+                <div id="demo-message" class="bg-amber-50 text-amber-800 p-3 rounded-lg border border-amber-200 mb-6 text-center font-bold text-lg min-h-[3.5rem] flex items-center justify-center">
+                    準備開始...
+                </div>
+
+                <!-- Visualization Area -->
+                <div class="relative min-h-[200px] flex justify-center items-end pb-10 gap-2 md:gap-4 select-none" id="demo-container">
+                    <!-- Cards will be injected here -->
+                </div>
+
+                <!-- Legend -->
+                <div class="flex flex-wrap justify-center gap-4 mt-4 text-xs font-bold text-slate-500">
+                    <div class="flex items-center gap-1"><div class="w-4 h-4 bg-emerald-100 border-2 border-emerald-500 rounded"></div> 已排序區</div>
+                    <div class="flex items-center gap-1"><div class="w-4 h-4 bg-white border-2 border-slate-300 rounded"></div> 未排序區</div>
+                    <div class="flex items-center gap-1"><div class="w-4 h-4 bg-yellow-100 border-2 border-yellow-500 rounded"></div> 當前 Key</div>
+                    <div class="flex items-center gap-1"><div class="w-4 h-4 bg-blue-100 border-2 border-blue-500 rounded"></div> 比較對象</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: PLAY (INTERACTIVE) -->
+        <div id="view-play" class="view-section hidden space-y-6">
+            
+            <!-- Mode Selection -->
+            <div class="flex justify-center gap-4 mb-4">
+                <button onclick="setGameMode('drag')" id="mode-drag" class="mode-btn px-6 py-3 rounded-xl border-b-4 border-indigo-800 bg-indigo-600 text-white font-bold text-lg hover:translate-y-1 transition-all shadow-lg w-1/2 md:w-auto active-mode ring-4 ring-offset-2 ring-indigo-300">
+                    玩法 A: 拖曳插入
+                </button>
+                <button onclick="setGameMode('algo')" id="mode-algo" class="mode-btn px-6 py-3 rounded-xl border-b-4 border-slate-400 bg-slate-200 text-slate-600 font-bold text-lg hover:translate-y-1 transition-all shadow-lg w-1/2 md:w-auto">
+                    玩法 B: 演算法三鍵
+                </button>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-lg border-2 border-slate-200 min-h-[400px]">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-700" id="game-title">拖曳挑戰</h2>
+                        <p class="text-slate-500 text-sm" id="game-instruction">請把黃色的 Key 卡片拖曳到綠色區域的正確位置！</p>
+                    </div>
+                    <div class="flex gap-4 text-center">
+                        <div class="bg-slate-100 p-2 rounded-lg min-w-[80px]">
+                            <div class="text-xs text-slate-500 font-bold uppercase">Round</div>
+                            <div class="text-xl font-black text-indigo-600" id="game-round">1/5</div>
+                        </div>
+                        <div class="bg-slate-100 p-2 rounded-lg min-w-[80px]">
+                            <div class="text-xs text-slate-500 font-bold uppercase">Errors</div>
+                            <div class="text-xl font-black text-red-500" id="game-errors">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Game Area -->
+                <div id="game-container" class="relative bg-slate-50 rounded-xl border-2 border-slate-200 p-4 md:p-8 min-h-[250px] flex justify-center items-center gap-3">
+                    <!-- Game elements injected here -->
+                </div>
+
+                <!-- Algo Mode Controls (Hidden by default) -->
+                <div id="algo-controls" class="hidden mt-6 grid grid-cols-3 gap-4 max-w-lg mx-auto">
+                    <button onclick="algoAction('compare')" class="bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl border-b-4 border-blue-700 transition-all flex flex-col items-center gap-1 group">
+                        <i data-lucide="eye" class="group-hover:scale-110 transition-transform"></i>
+                        1. 比較左邊
+                    </button>
+                    <button onclick="algoAction('shift')" class="bg-purple-500 hover:bg-purple-600 active:bg-purple-700 text-white font-bold py-3 px-4 rounded-xl border-b-4 border-purple-700 transition-all flex flex-col items-center gap-1 group">
+                        <i data-lucide="arrow-right-circle" class="group-hover:scale-110 transition-transform"></i>
+                        2. 右移一格
+                    </button>
+                    <button onclick="algoAction('insert')" class="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl border-b-4 border-emerald-700 transition-all flex flex-col items-center gap-1 group">
+                        <i data-lucide="arrow-down-circle" class="group-hover:scale-110 transition-transform"></i>
+                        3. 插入 Key
+                    </button>
+                </div>
+                
+                <div id="game-feedback" class="mt-4 text-center font-bold text-lg h-8 text-indigo-600"></div>
+                
+                <div class="mt-6 flex justify-center">
+                     <button onclick="initGame()" class="bg-slate-800 text-white px-6 py-2 rounded-full font-bold hover:bg-slate-700 transition-colors shadow-lg flex items-center gap-2">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i> 重置關卡
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 3: PRACTICE -->
+        <div id="view-practice" class="view-section hidden space-y-6">
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Question 1 -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg border-2 border-indigo-100">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="font-bold text-lg text-slate-800">練習題 1</h3>
+                        <span class="bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded font-bold">基礎</span>
+                    </div>
+                    <p class="mb-4 text-slate-600">原始資料：<span class="font-mono bg-slate-100 px-2 rounded text-indigo-700 font-bold">9, 7, 2, 5, 4</span></p>
+                    <p class="mb-2 text-sm text-slate-500">請寫出第 2 輪結束後的結果（這時已處理了9, 7, 2）：</p>
+                    
+                    <div class="flex gap-2 mb-4 justify-center">
+                        <input type="number" id="q1-1" class="w-12 h-12 text-center border-2 border-slate-300 rounded-lg font-bold text-xl focus:border-indigo-500 outline-none" placeholder="?">
+                        <input type="number" id="q1-2" class="w-12 h-12 text-center border-2 border-slate-300 rounded-lg font-bold text-xl focus:border-indigo-500 outline-none" placeholder="?">
+                        <input type="number" id="q1-3" class="w-12 h-12 text-center border-2 border-slate-300 rounded-lg font-bold text-xl focus:border-indigo-500 outline-none" placeholder="?">
+                        <input type="number" id="q1-4" class="w-12 h-12 text-center border-2 border-slate-300 rounded-lg font-bold text-xl focus:border-indigo-500 outline-none" value="5" disabled class="bg-slate-100 text-slate-400">
+                        <input type="number" id="q1-5" class="w-12 h-12 text-center border-2 border-slate-300 rounded-lg font-bold text-xl focus:border-indigo-500 outline-none" value="4" disabled class="bg-slate-100 text-slate-400">
+                    </div>
+                    <button onclick="checkQ1()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg transition-colors">檢查答案</button>
+                    <div id="q1-feedback" class="mt-2 text-center font-bold text-sm h-5"></div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg border-2 border-indigo-100">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="font-bold text-lg text-slate-800">練習題 2</h3>
+                        <span class="bg-pink-100 text-pink-700 text-xs px-2 py-1 rounded font-bold">挑戰</span>
+                    </div>
+                    <p class="mb-4 text-slate-600">原始資料：<span class="font-mono bg-slate-100 px-2 rounded text-indigo-700 font-bold">10, 8, 9, 6, 12, 7</span></p>
+                    <p class="mb-2 text-sm text-slate-500">進行到某一輪時，Key 是 <span class="font-bold text-yellow-600">6</span>。請問這一輪結束後，數列最前面四個數是？</p>
+                    
+                     <div class="flex gap-2 mb-4 justify-center">
+                        <input type="number" id="q2-1" class="w-12 h-12 text-center border-2 border-slate-300 rounded-lg font-bold text-xl focus:border-pink-500 outline-none" placeholder="?">
+                        <input type="number" id="q2-2" class="w-12 h-12 text-center border-2 border-slate-300 rounded-lg font-bold text-xl focus:border-pink-500 outline-none" placeholder="?">
+                        <input type="number" id="q2-3" class="w-12 h-12 text-center border-2 border-slate-300 rounded-lg font-bold text-xl focus:border-pink-500 outline-none" placeholder="?">
+                        <input type="number" id="q2-4" class="w-12 h-12 text-center border-2 border-slate-300 rounded-lg font-bold text-xl focus:border-pink-500 outline-none" placeholder="?">
+                    </div>
+                    <button onclick="checkQ2()" class="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 rounded-lg transition-colors">檢查答案</button>
+                    <div id="q2-feedback" class="mt-2 text-center font-bold text-sm h-5"></div>
+                </div>
+            </div>
+
+            <!-- Conceptual Quiz -->
+            <div class="bg-white p-6 rounded-2xl shadow-lg border-2 border-yellow-200 mt-6">
+                <h3 class="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2"><i data-lucide="lightbulb" class="text-yellow-500"></i> 觀念快問快答</h3>
+                <div class="space-y-4">
+                    <div class="border-b pb-4">
+                        <p class="font-bold mb-2">Q: 插入排序法每一輪的 Key 都是從哪裡拿的？</p>
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="qz1" value="0" class="w-5 h-5 text-indigo-600"> 已排序區的最後一個</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="qz1" value="1" class="w-5 h-5 text-indigo-600"> 未排序區的第 1 個</label>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="font-bold mb-2">Q: 在比較過程中，如果遇到比 Key 大的數字，我們做什麼？</p>
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="qz2" value="1" class="w-5 h-5 text-indigo-600"> 把它往右移一格</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="qz2" value="0" class="w-5 h-5 text-indigo-600"> 立刻把 Key 插在它左邊</label>
+                        </div>
+                    </div>
+                    <div class="pt-2">
+                        <button onclick="checkQuiz()" class="bg-yellow-500 text-white font-bold px-6 py-2 rounded-lg hover:bg-yellow-600 transition-colors">送出回答</button>
+                        <span id="quiz-feedback" class="ml-4 font-bold"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Overlay for Win -->
+    <div id="win-overlay" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-[100] p-4">
+        <div class="bg-white rounded-3xl p-8 max-w-sm text-center pop-in border-4 border-yellow-400">
+            <div class="text-6xl mb-4">🏆</div>
+            <h2 class="text-3xl font-black text-indigo-900 mb-2">恭喜完成！</h2>
+            <p class="text-slate-600 mb-6">你已經掌握了插入排序法的精髓！</p>
+            <div class="bg-slate-100 p-4 rounded-xl mb-6">
+                <div class="flex justify-between border-b border-slate-300 pb-2 mb-2">
+                    <span>錯誤次數</span>
+                    <span id="result-errors" class="font-bold text-red-500">0</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>評價</span>
+                    <span id="result-rank" class="font-bold text-emerald-600">S 級大師</span>
+                </div>
+            </div>
+            <div class="flex gap-2 justify-center">
+                <button onclick="closeOverlay()" class="bg-slate-200 text-slate-700 font-bold px-6 py-3 rounded-xl hover:bg-slate-300">關閉</button>
+                <button onclick="initGame(); closeOverlay()" class="bg-indigo-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-indigo-700 shadow-lg border-b-4 border-indigo-800 active:border-b-0 active:translate-y-1">再玩一次</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Init Icons
+        lucide.createIcons();
+
+        // --- GLOBAL STATE ---
+        const DEMO_DATA = [8, 7, 9, 6, 2];
+        const GAME_DATA = [6, 9, 2, 5, 4]; // Default easy
+        // Extended datasets for levels? Keeping it simple for one file.
+        
+        let demoState = {
+            arr: [...DEMO_DATA],
+            i: 1, // Start from index 1 (rule 1)
+            j: 0,
+            key: null,
+            status: 'IDLE', // IDLE, PICK_KEY, COMPARE, SHIFT, INSERT, NEXT
+            timer: null
+        };
+
+        let gameState = {
+            arr: [],
+            mode: 'drag', // 'drag' or 'algo'
+            sortedCount: 1, // Index boundary between sorted/unsorted
+            currentKeyIdx: 1, // Original index of current key
+            tempKeyVal: null,
+            compareIdx: 0,
+            errors: 0,
+            algoStatus: 'PICK', // PICK, COMPARE, SHIFT
+            selectedGap: null
+        };
+
+        // --- NAVIGATION ---
+        function switchTab(tab) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`view-${tab}`).classList.remove('hidden');
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-yellow-400', 'text-indigo-900', 'shadow-md', 'scale-105');
+                btn.classList.add('text-indigo-100');
+            });
+            const activeBtn = document.getElementById(`btn-${tab}`);
+            activeBtn.classList.remove('text-indigo-100');
+            activeBtn.classList.add('bg-yellow-400', 'text-indigo-900', 'shadow-md', 'scale-105');
+
+            if(tab === 'play') initGame();
+            if(tab === 'learn') resetDemo();
+        }
+
+        // --- HELPER RENDER CARD ---
+        function createCardHTML(val, type='normal', label='') {
+            let classes = "w-16 h-24 md:w-20 md:h-28 rounded-xl flex flex-col items-center justify-center font-black text-2xl md:text-3xl border-2 card-shadow transition-all-300 relative select-none ";
+            
+            if (type === 'sorted') classes += "bg-white border-emerald-500 text-emerald-700";
+            else if (type === 'unsorted') classes += "bg-slate-200 border-slate-400 text-slate-500";
+            else if (type === 'key') classes += "bg-yellow-100 border-yellow-500 text-yellow-700 z-20";
+            else if (type === 'comparing') classes += "bg-blue-100 border-blue-500 text-blue-700 scale-105";
+            else if (type === 'empty') classes += "bg-slate-100 border-dashed border-slate-300 opacity-50";
+            
+            return `
+                <div class="${classes}" id="card-${val}">
+                    <span>${val}</span>
+                    ${label ? `<span class="absolute -top-3 text-[10px] bg-slate-800 text-white px-2 py-0.5 rounded-full">${label}</span>` : ''}
+                </div>
+            `;
+        }
+
+        // --- SECTION 1: DEMO LOGIC ---
+        
+        function renderDemo() {
+            const container = document.getElementById('demo-container');
+            container.innerHTML = '';
+            
+            const { arr, i, j, key, status } = demoState;
+
+            // Render array elements with visual state
+            arr.forEach((val, idx) => {
+                let type = 'unsorted';
+                let label = '';
+                
+                // Logic to visualize "holes" during shift not implemented deeply for simplicity, 
+                // instead we visualize the swap/shift logic state.
+                
+                if (idx < i) type = 'sorted';
+                
+                if (status === 'PICK_KEY' && idx === i) {
+                    type = 'key';
+                    label = 'Key';
+                } else if (status === 'COMPARE') {
+                    if (idx === j) type = 'comparing';
+                    if (idx === j+1) type = 'key'; // Visually key is floating near j
+                } else if (status === 'SHIFT') {
+                    // During shift, j+1 becomes the value of j
+                }
+
+                // Override for the finalized view of the step
+                if (status === 'IDLE') {
+                    if(idx < i) type = 'sorted';
+                    else type = 'unsorted';
+                }
+
+                // If we are actively sorting index 'i', visual handling
+                if (status !== 'IDLE' && status !== 'NEXT' && status !== 'PICK_KEY') {
+                    // Visualizing the "gap" and "key" is tricky in static render loop.
+                    // We'll trust the flow logic to update the array data and just highlight.
+                    if (idx === j) { type = 'comparing'; label = '比較中'; }
+                    if (idx === j + 1 && arr[idx] === key) { type = 'key'; label = 'Key'; }
+                }
+
+                const div = document.createElement('div');
+                div.innerHTML = createCardHTML(val, type, label);
+                container.appendChild(div.firstElementChild);
+            });
+        }
+
+        function resetDemo() {
+            clearInterval(demoState.timer);
+            demoState = {
+                arr: [...DEMO_DATA],
+                i: 1, j: 0, key: null, status: 'IDLE', timer: null
+            };
+            document.getElementById('demo-play-btn').innerHTML = '<i data-lucide="play" class="w-4 h-4"></i> 播放';
+            document.getElementById('demo-message').innerText = "準備開始：原始資料 [ " + DEMO_DATA.join(", ") + " ]";
+            renderDemo();
+            lucide.createIcons();
+        }
+
+        function toggleDemoAutoPlay() {
+            if (demoState.timer) {
+                clearInterval(demoState.timer);
+                demoState.timer = null;
+                document.getElementById('demo-play-btn').innerHTML = '<i data-lucide="play" class="w-4 h-4"></i> 播放';
+            } else {
+                demoState.timer = setInterval(stepDemo, 1000); // 1 sec per step
+                document.getElementById('demo-play-btn').innerHTML = '<i data-lucide="pause" class="w-4 h-4"></i> 暫停';
+                stepDemo(); // run one immediately
+            }
+            lucide.createIcons();
+        }
+
+        function stepDemo() {
+            const msg = document.getElementById('demo-message');
+            const s = demoState;
+
+            if (s.status === 'DONE') {
+                clearInterval(s.timer);
+                s.timer = null;
+                document.getElementById('demo-play-btn').innerHTML = '<i data-lucide="rotate-ccw" class="w-4 h-4"></i> 重置';
+                lucide.createIcons();
+                return;
+            }
+
+            switch(s.status) {
+                case 'IDLE':
+                    if (s.i >= s.arr.length) {
+                        s.status = 'DONE';
+                        msg.innerText = "排序完成！所有綠色都已就位。";
+                        renderDemo();
+                        return;
+                    }
+                    s.status = 'PICK_KEY';
+                    s.key = s.arr[s.i];
+                    s.j = s.i - 1;
+                    msg.innerText = `第 ${s.i} 輪：拿出未排序第 1 個數字 ${s.key} 當作 Key`;
+                    break;
+
+                case 'PICK_KEY':
+                    s.status = 'COMPARE';
+                    msg.innerHTML = `準備開始比較：Key (${s.key}) vs 左邊的 ${s.arr[s.j]}`;
+                    break;
+
+                case 'COMPARE':
+                    if (s.j >= 0 && s.arr[s.j] > s.key) {
+                        msg.innerHTML = `<span class="text-blue-600">${s.arr[s.j]}</span> 比 Key (${s.key}) 大，往右移一格！`;
+                        s.status = 'SHIFT';
+                    } else {
+                        s.status = 'INSERT';
+                        msg.innerText = (s.j < 0) ? "比到最左邊了，插入！" : `遇到 ${s.arr[s.j]} 比 Key 小，插入在它後面！`;
+                    }
+                    break;
+
+                case 'SHIFT':
+                    s.arr[s.j + 1] = s.arr[s.j];
+                    s.arr[s.j] = s.key; // Visually put key in gap for animation fluidity, though real algo holds it
+                    s.j--;
+                    s.status = 'COMPARE';
+                    break;
+
+                case 'INSERT':
+                    s.arr[s.j + 1] = s.key;
+                    s.i++;
+                    s.status = 'IDLE';
+                    msg.innerText = `插入完成。準備下一輪...`;
+                    break;
+            }
+            renderDemo();
+        }
+
+
+        // --- SECTION 2: GAME LOGIC ---
+
+        function initGame() {
+            gameState.arr = [...GAME_DATA];
+            gameState.sortedCount = 1;
+            gameState.currentKeyIdx = 1; // Unsorted starts at index 1
+            gameState.errors = 0;
+            gameState.mode = gameState.mode || 'drag'; // Keep current mode
+            gameState.tempKeyVal = null;
+            gameState.selectedGap = null; // For Drag mode logic
+
+            // Algo Mode specifics
+            gameState.algoStatus = 'PICK';
+            gameState.compareIdx = 0;
+            gameState.j = 0;
+            gameState.key = 0;
+
+            document.getElementById('game-errors').innerText = 0;
+            document.getElementById('game-round').innerText = `1/${gameState.arr.length - 1}`;
+            document.getElementById('game-feedback').innerText = "";
+
+            renderGame();
+        }
+
+        function setGameMode(mode) {
+            gameState.mode = mode;
+            // Update UI
+            document.querySelectorAll('.mode-btn').forEach(b => {
+                b.classList.remove('bg-indigo-600', 'text-white', 'ring-4', 'ring-indigo-300', 'border-indigo-800');
+                b.classList.add('bg-slate-200', 'text-slate-600', 'border-slate-400');
+            });
+            const active = document.getElementById(`mode-${mode}`);
+            active.classList.remove('bg-slate-200', 'text-slate-600', 'border-slate-400');
+            active.classList.add('bg-indigo-600', 'text-white', 'ring-4', 'ring-indigo-300', 'border-indigo-800');
+
+            if (mode === 'drag') {
+                document.getElementById('game-title').innerText = "拖曳挑戰";
+                document.getElementById('game-instruction').innerText = "點擊黃色 Key，再點擊綠色區域中的正確空位插入。";
+                document.getElementById('algo-controls').classList.add('hidden');
+            } else {
+                document.getElementById('game-title').innerText = "演算法操作";
+                document.getElementById('game-instruction').innerText = "扮演 CPU，一步步執行：比較 → 右移 → 插入。";
+                document.getElementById('algo-controls').classList.remove('hidden');
+            }
+            initGame();
+        }
+
+        function renderGame() {
+            const container = document.getElementById('game-container');
+            container.innerHTML = '';
+            const feedback = document.getElementById('game-feedback');
+
+            // Victory Check
+            if (gameState.sortedCount >= gameState.arr.length) {
+                container.innerHTML = `<div class="text-center"><div class="text-6xl animate-bounce">🎉</div></div>`;
+                showWinOverlay();
+                return;
+            }
+
+            const keyVal = gameState.arr[gameState.sortedCount]; // The value we are trying to insert
+            const arr = gameState.arr;
+
+            if (gameState.mode === 'drag') {
+                // DRAG MODE RENDER
+                // We show sorted items as distinct slots
+                // We show the "Key" separated
+                // User clicks Key (highlights), then clicks a "Gap" between sorted items.
+                
+                // 1. Render Sorted Area with Gaps
+                let sortedHTML = '<div class="flex items-center bg-emerald-50 p-3 rounded-xl border border-emerald-200 gap-1">';
+                
+                // Gap 0 (At the very start)
+                sortedHTML += `<div onclick="handleGapClick(-1)" class="w-4 h-24 hover:bg-yellow-200 cursor-pointer rounded transition-colors border-2 border-transparent hover:border-yellow-400 gap-slot" data-idx="-1"></div>`;
+
+                for(let i=0; i<gameState.sortedCount; i++) {
+                    sortedHTML += createCardHTML(arr[i], 'sorted');
+                    // Gap i (After index i)
+                    sortedHTML += `<div onclick="handleGapClick(${i})" class="w-4 h-24 hover:bg-yellow-200 cursor-pointer rounded transition-colors border-2 border-transparent hover:border-yellow-400 gap-slot" data-idx="${i}"></div>`;
+                }
+                sortedHTML += '</div>';
+
+                // 2. Render Unsorted Area
+                let unsortedHTML = '<div class="flex items-center gap-2 border-l-4 border-slate-300 pl-4">';
+                // The Key
+                unsortedHTML += `<div class="cursor-grab hover:scale-105 transition-transform" onclick="highlightGaps()">${createCardHTML(keyVal, 'key', 'KEY')}</div>`;
+                
+                // The rest
+                for(let i=gameState.sortedCount+1; i<arr.length; i++) {
+                    unsortedHTML += createCardHTML(arr[i], 'unsorted');
+                }
+                unsortedHTML += '</div>';
+
+                container.innerHTML = sortedHTML + unsortedHTML;
+            } 
+            else {
+                // ALGO MODE RENDER (Linear Array)
+                // Just render the array linearly but highlight based on internal algo state
+                let html = '';
+                
+                // If we are in the middle of simulation, we might have a hole or shifted items
+                // To keep it simple for the user, we display the array as is.
+                
+                arr.forEach((val, idx) => {
+                    let type = 'unsorted';
+                    let label = '';
+                    
+                    if (idx < gameState.sortedCount) type = 'sorted';
+
+                    // Highlighting based on logic step
+                    if (gameState.algoStatus === 'PICK' && idx === gameState.sortedCount) {
+                        type = 'key'; label = 'Key?';
+                    }
+                    else if (gameState.algoStatus !== 'PICK') {
+                        // We are active
+                        // Highlight Key
+                        // Highlight Compare target
+                        // This requires tracking where the 'key' currently is in memory vs visual
+                        // Simplified: In Algo mode, we only visualize the POINTERS.
+                        if (idx === gameState.sortedCount) type = 'key';
+                        if (idx === gameState.compareIdx && gameState.algoStatus === 'COMPARE') type = 'comparing';
+                    }
+
+                    html += createCardHTML(val, type, label);
+                });
+                
+                container.innerHTML = html;
+            }
+        }
+
+        // --- INTERACTION HANDLERS (DRAG MODE) ---
+        
+        function highlightGaps() {
+            // Visual cue for students to know they can click gaps
+            document.querySelectorAll('.gap-slot').forEach(el => {
+                el.classList.add('bg-yellow-100', 'animate-pulse');
+            });
+            document.getElementById('game-feedback').innerText = "現在點擊左邊綠色區域中的空隙來插入！";
+        }
+
+        function handleGapClick(gapIndex) {
+            // gapIndex is the index of the element BEFORE the gap. -1 means before index 0.
+            // Logic: The key (currently at sortedCount) should be inserted at index X.
+            // The correct position is where all elements to left are <= key, and all right (up to sortedCount) are > key.
+            
+            const keyVal = gameState.arr[gameState.sortedCount];
+            const sortedSubArr = gameState.arr.slice(0, gameState.sortedCount);
+            
+            // Find correct index
+            let correctIndex = 0;
+            for(let i=0; i<sortedSubArr.length; i++) {
+                if(keyVal > sortedSubArr[i]) {
+                    correctIndex = i + 1;
+                }
+            }
+            
+            // gapIndex -1 corresponds to insertion index 0.
+            // gapIndex 0 corresponds to insertion index 1.
+            const userChosenIndex = gapIndex + 1;
+
+            if (userChosenIndex === correctIndex) {
+                // Correct!
+                playFeedback(true, "正確！插入位置完美！");
+                
+                // Perform the array shift in memory
+                // Remove key from old spot
+                gameState.arr.splice(gameState.sortedCount, 1);
+                // Insert at new spot
+                gameState.arr.splice(correctIndex, 0, keyVal);
+                
+                gameState.sortedCount++;
+                document.getElementById('game-round').innerText = `${Math.min(gameState.sortedCount, gameState.arr.length-1)}/${gameState.arr.length-1}`;
+                
+                setTimeout(() => {
+                    renderGame();
+                }, 800);
+            } else {
+                // Wrong
+                gameState.errors++;
+                document.getElementById('game-errors').innerText = gameState.errors;
+                
+                // Hint logic
+                if (userChosenIndex < correctIndex) {
+                    playFeedback(false, `錯誤！${keyVal} 比左邊的某些數字還大喔！`);
+                } else {
+                    playFeedback(false, `錯誤！${keyVal} 比右邊的某些數字還小喔！`);
+                }
+            }
+        }
+
+        // --- INTERACTION HANDLERS (ALGO MODE) ---
+        
+        function algoAction(action) {
+            const feedback = document.getElementById('game-feedback');
+            const arr = gameState.arr;
+            
+            // Initialize round if needed
+            if (gameState.algoStatus === 'PICK') {
+                gameState.key = arr[gameState.sortedCount]; // Store value
+                gameState.j = gameState.sortedCount - 1;    // Compare with left
+                gameState.algoStatus = 'COMPARE';
+                renderGame();
+                
+                if (action !== 'compare') {
+                    playFeedback(false, "第一步必須先「比較」！");
+                    return;
+                }
+                // If compare was clicked, we proceed to logic below
+            }
+
+            const j = gameState.j;
+            const key = gameState.key;
+
+            if (action === 'compare') {
+                gameState.compareIdx = j; // Visual highlight
+                renderGame();
+                
+                if (j >= 0 && arr[j] > key) {
+                    // Logic says: Should Shift
+                    feedback.innerText = `${arr[j]} > ${key}，應該右移！`;
+                    gameState.expectedAction = 'shift';
+                } else {
+                    // Logic says: Found spot, Should Insert
+                    feedback.innerText = (j<0) ? "比到頭了，插入！" : `${arr[j]} <= ${key}，找到位置，插入！`;
+                    gameState.expectedAction = 'insert';
+                }
+            }
+            else if (action === 'shift') {
+                if (gameState.expectedAction === 'shift') {
+                     // Do shift visual/logic
+                     arr[j+1] = arr[j];
+                     arr[j] = key; // Visually swap for clarity in this simplified mode
+                     gameState.j--;
+                     gameState.algoStatus = 'COMPARE'; // Back to compare loop
+                     playFeedback(true, "右移成功！再比下一個。");
+                     renderGame();
+                     // Reset expectation
+                     gameState.expectedAction = null; 
+                } else {
+                    playFeedback(false, "現在還不能右移，或者應該插入了？");
+                    gameState.errors++;
+                }
+            }
+            else if (action === 'insert') {
+                if (gameState.expectedAction === 'insert') {
+                    // Finalize this round
+                    arr[j+1] = key; // Confirm placement
+                    gameState.sortedCount++;
+                    gameState.algoStatus = 'PICK';
+                    document.getElementById('game-round').innerText = `${Math.min(gameState.sortedCount, gameState.arr.length-1)}/${gameState.arr.length-1}`;
+                    playFeedback(true, "插入成功！下一輪。");
+                    renderGame();
+                } else {
+                    playFeedback(false, "還沒找到正確位置，不能插入！");
+                    gameState.errors++;
+                }
+            }
+            document.getElementById('game-errors').innerText = gameState.errors;
+        }
+
+        function playFeedback(isSuccess, text) {
+            const el = document.getElementById('game-feedback');
+            el.innerText = text;
+            el.className = isSuccess ? "mt-4 text-center font-bold text-lg h-8 text-emerald-600 animate-pulse" : "mt-4 text-center font-bold text-lg h-8 text-red-500 animate-shake";
+        }
+
+        // --- PRACTICE & QUIZ ---
+        function checkQ1() {
+            // Correct answer for 9,7,2,5,4 after 2 rounds (sorting 9,7,2) -> 2,7,9, 5,4
+            const ans = [2, 7, 9, 5]; // First 4 digits
+            const inputs = [
+                parseInt(document.getElementById('q1-1').value),
+                parseInt(document.getElementById('q1-2').value),
+                parseInt(document.getElementById('q1-3').value)
+            ];
+            
+            if (inputs[0]===2 && inputs[1]===7 && inputs[2]===9) {
+                document.getElementById('q1-feedback').innerHTML = '<span class="text-emerald-600">正確！(2, 7, 9 排好了)</span>';
+            } else {
+                document.getElementById('q1-feedback').innerHTML = '<span class="text-red-500">錯誤。提示：前三個數 9,7,2 排好是 2,7,9</span>';
+            }
+        }
+
+        function checkQ2() {
+            // 10, 8, 9, 6, 12, 7
+            // Round 1 (key 8): 8, 10, 9...
+            // Round 2 (key 9): 8, 9, 10...
+            // Round 3 (key 6): 6, 8, 9, 10... -> Correct answer is 6, 8, 9, 10
+            const inputs = [
+                parseInt(document.getElementById('q2-1').value),
+                parseInt(document.getElementById('q2-2').value),
+                parseInt(document.getElementById('q2-3').value),
+                parseInt(document.getElementById('q2-4').value)
+            ];
+            
+            if (inputs[0]===6 && inputs[1]===8 && inputs[2]===9 && inputs[3]===10) {
+                document.getElementById('q2-feedback').innerHTML = '<span class="text-emerald-600">正確！Key=6 插入到最前面。</span>';
+            } else {
+                document.getElementById('q2-feedback').innerHTML = '<span class="text-red-500">加油！Key 是 6，它比前面 8,9,10 都小喔。</span>';
+            }
+        }
+
+        function checkQuiz() {
+            const q1 = document.querySelector('input[name="qz1"]:checked');
+            const q2 = document.querySelector('input[name="qz2"]:checked');
+            const feedback = document.getElementById('quiz-feedback');
+            
+            if (!q1 || !q2) {
+                feedback.innerText = "請回答所有問題！";
+                feedback.className = "ml-4 font-bold text-slate-500";
+                return;
+            }
+
+            if (q1.value === "1" && q2.value === "1") {
+                feedback.innerText = "全對！觀念很清楚！💯";
+                feedback.className = "ml-4 font-bold text-emerald-600";
+            } else {
+                feedback.innerText = "有答錯喔，再檢查一下規則！";
+                feedback.className = "ml-4 font-bold text-red-500";
+            }
+        }
+
+        // --- OVERLAY ---
+        function showWinOverlay() {
+            const overlay = document.getElementById('win-overlay');
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+            
+            const err = gameState.errors;
+            document.getElementById('result-errors').innerText = err;
+            let rank = "C";
+            if(err === 0) rank = "S 級大師";
+            else if(err <= 2) rank = "A 級高手";
+            else if(err <= 5) rank = "B 級玩家";
+            
+            document.getElementById('result-rank').innerText = rank;
+        }
+
+        function closeOverlay() {
+            const overlay = document.getElementById('win-overlay');
+            overlay.classList.add('hidden');
+            overlay.classList.remove('flex');
+        }
+
+        // Start Up
+        renderDemo();
+    </script>
+</body>
+</html>
