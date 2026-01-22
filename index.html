@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>插入排序法大挑戰 | Insertion Sort Challenge</title>
+    <title>插入排序法大挑戰 | Insertion Sort Challenge v0122</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -70,12 +70,14 @@
                 <div class="bg-white p-5 rounded-xl border-2 border-indigo-100 shadow-sm hover:shadow-md transition-shadow">
                     <div class="text-emerald-500 mb-2"><i data-lucide="play-circle" class="w-8 h-8"></i></div>
                     <h3 class="text-lg font-bold mb-2">演算法邏輯</h3>
-                    <div class="bg-slate-800 text-green-400 p-2 rounded text-xs font-mono overflow-x-auto">
-                        <p>for i = 1 to n-1</p>
-                        <p class="pl-2">key = A[i]</p>
-                        <p class="pl-2">while j >= 0 and A[j] > key</p>
-                        <p class="pl-4">A[j+1] = A[j] (右移)</p>
-                        <p class="pl-2">A[j+1] = key (插入)</p>
+                    <div class="bg-slate-800 text-green-400 p-3 rounded-lg text-xs font-mono overflow-x-auto leading-relaxed shadow-inner">
+                        <p><span class="text-pink-400">for</span> i = 1 <span class="text-pink-400">to</span> n-1 <span class="text-slate-500">// 從第 2 張牌開始</span></p>
+                        <p class="pl-4">key = A[i] <span class="text-slate-500">// 拿出這張牌 (Key)</span></p>
+                        <p class="pl-4">j = i - 1 <span class="text-slate-500">// 準備跟左邊的比</span></p>
+                        <p class="pl-4"><span class="text-pink-400">while</span> j >= 0 <span class="text-pink-400">and</span> A[j] > key</p>
+                        <p class="pl-8">A[j+1] = A[j] <span class="text-slate-500">// 比 Key 大就往右移</span></p>
+                        <p class="pl-8">j = j - 1 <span class="text-slate-500">// 再看更左邊那張</span></p>
+                        <p class="pl-4">A[j+1] = key <span class="text-slate-500">// 找到位置，插入！</span></p>
                     </div>
                 </div>
             </div>
