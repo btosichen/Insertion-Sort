@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>插入排序法大挑戰 | Insertion Sort Challenge v0122</title>
+    <title>插入排序法大挑戰 | Insertion Sort Challenge V0122.1</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -42,7 +42,7 @@
             <div class="flex gap-2 bg-indigo-700 p-1 rounded-lg">
                 <button onclick="switchTab('learn')" id="btn-learn" class="tab-btn px-4 py-2 rounded font-bold transition-all bg-yellow-400 text-indigo-900 shadow-md transform scale-105">教學區</button>
                 <button onclick="switchTab('play')" id="btn-play" class="tab-btn px-4 py-2 rounded font-bold transition-all hover:bg-indigo-500 text-indigo-100">互動闖關</button>
-                <button onclick="switchTab('practice')" id="btn-practice" class="tab-btn px-4 py-2 rounded font-bold transition-all hover:bg-indigo-500 text-indigo-100">隨堂練習</button>
+                <button onclick="switchTab('quiz')" id="btn-quiz" class="tab-btn px-4 py-2 rounded font-bold transition-all hover:bg-indigo-500 text-indigo-100">隨堂測驗</button>
             </div>
         </div>
     </nav>
@@ -135,7 +135,7 @@
                 <div class="flex justify-between items-center mb-6">
                     <div>
                         <h2 class="text-xl font-bold text-slate-700" id="game-title">拖曳挑戰</h2>
-                        <p class="text-slate-500 text-sm" id="game-instruction">請把黃色的 Key 卡片拖曳到綠色區域的正確位置！</p>
+                        <p class="text-slate-500 text-sm" id="game-instruction">點擊黃色 Key，再點擊綠色區域中的正確空位插入。</p>
                     </div>
                     <div class="flex gap-4 text-center">
                         <div class="bg-slate-100 p-2 rounded-lg min-w-[80px]">
@@ -180,78 +180,91 @@
             </div>
         </div>
 
-        <!-- SECTION 3: PRACTICE -->
-        <div id="view-practice" class="view-section hidden space-y-6">
-            <div class="grid md:grid-cols-2 gap-6">
-                <!-- Question 1 -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border-2 border-indigo-100">
-                    <div class="flex justify-between items-start mb-4">
-                        <h3 class="font-bold text-lg text-slate-800">練習題 1</h3>
-                        <span class="bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded font-bold">基礎</span>
-                    </div>
-                    <p class="mb-4 text-slate-600">原始資料：<span class="font-mono bg-slate-100 px-2 rounded text-indigo-700 font-bold">9, 7, 2, 5, 4</span></p>
-                    <p class="mb-2 text-sm text-slate-500">請寫出第 2 輪結束後的結果（這時已處理了9, 7, 2）：</p>
-                    
-                    <div class="flex gap-2 mb-4 justify-center">
-                        <input type="number" id="q1-1" class="w-12 h-12 text-center border-2 border-slate-300 rounded-lg font-bold text-xl focus:border-indigo-500 outline-none" placeholder="?">
-                        <input type="number" id="q1-2" class="w-12 h-12 text-center border-2 border-slate-300 rounded-lg font-bold text-xl focus:border-indigo-500 outline-none" placeholder="?">
-                        <input type="number" id="q1-3" class="w-12 h-12 text-center border-2 border-slate-300 rounded-lg font-bold text-xl focus:border-indigo-500 outline-none" placeholder="?">
-                        <input type="number" id="q1-4" class="w-12 h-12 text-center border-2 border-slate-300 rounded-lg font-bold text-xl focus:border-indigo-500 outline-none" value="5" disabled class="bg-slate-100 text-slate-400">
-                        <input type="number" id="q1-5" class="w-12 h-12 text-center border-2 border-slate-300 rounded-lg font-bold text-xl focus:border-indigo-500 outline-none" value="4" disabled class="bg-slate-100 text-slate-400">
-                    </div>
-                    <button onclick="checkQ1()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg transition-colors">檢查答案</button>
-                    <div id="q1-feedback" class="mt-2 text-center font-bold text-sm h-5"></div>
-                </div>
-
-                <!-- Question 2 -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border-2 border-indigo-100">
-                    <div class="flex justify-between items-start mb-4">
-                        <h3 class="font-bold text-lg text-slate-800">練習題 2</h3>
-                        <span class="bg-pink-100 text-pink-700 text-xs px-2 py-1 rounded font-bold">挑戰</span>
-                    </div>
-                    <p class="mb-4 text-slate-600">原始資料：<span class="font-mono bg-slate-100 px-2 rounded text-indigo-700 font-bold">10, 8, 9, 6, 12, 7</span></p>
-                    <p class="mb-2 text-sm text-slate-500">進行到某一輪時，Key 是 <span class="font-bold text-yellow-600">6</span>。請問這一輪結束後，數列最前面四個數是？</p>
-                    
-                     <div class="flex gap-2 mb-4 justify-center">
-                        <input type="number" id="q2-1" class="w-12 h-12 text-center border-2 border-slate-300 rounded-lg font-bold text-xl focus:border-pink-500 outline-none" placeholder="?">
-                        <input type="number" id="q2-2" class="w-12 h-12 text-center border-2 border-slate-300 rounded-lg font-bold text-xl focus:border-pink-500 outline-none" placeholder="?">
-                        <input type="number" id="q2-3" class="w-12 h-12 text-center border-2 border-slate-300 rounded-lg font-bold text-xl focus:border-pink-500 outline-none" placeholder="?">
-                        <input type="number" id="q2-4" class="w-12 h-12 text-center border-2 border-slate-300 rounded-lg font-bold text-xl focus:border-pink-500 outline-none" placeholder="?">
-                    </div>
-                    <button onclick="checkQ2()" class="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 rounded-lg transition-colors">檢查答案</button>
-                    <div id="q2-feedback" class="mt-2 text-center font-bold text-sm h-5"></div>
-                </div>
-            </div>
-
-            <!-- Conceptual Quiz -->
-            <div class="bg-white p-6 rounded-2xl shadow-lg border-2 border-yellow-200 mt-6">
-                <h3 class="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2"><i data-lucide="lightbulb" class="text-yellow-500"></i> 觀念快問快答</h3>
+        <!-- SECTION 3: QUIZ (Student Info + 20 Questions) -->
+        <div id="view-quiz" class="view-section hidden space-y-6">
+            
+            <!-- Student Login / Info -->
+            <div id="student-login" class="bg-white p-8 rounded-2xl shadow-xl border-4 border-indigo-200 max-w-lg mx-auto">
+                <h2 class="text-2xl font-black text-indigo-800 mb-6 text-center flex items-center justify-center gap-2">
+                    <i data-lucide="user-circle-2"></i> 學生資料登入
+                </h2>
                 <div class="space-y-4">
-                    <div class="border-b pb-4">
-                        <p class="font-bold mb-2">Q: 插入排序法每一輪的 Key 都是從哪裡拿的？</p>
-                        <div class="flex gap-4">
-                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="qz1" value="0" class="w-5 h-5 text-indigo-600"> 已排序區的最後一個</label>
-                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="qz1" value="1" class="w-5 h-5 text-indigo-600"> 未排序區的第 1 個</label>
-                        </div>
+                    <div>
+                        <label class="block text-slate-600 font-bold mb-1">班級</label>
+                        <input type="text" id="std-class" placeholder="例：801" class="w-full p-3 border-2 border-slate-300 rounded-lg text-lg focus:border-indigo-500 outline-none">
                     </div>
                     <div>
-                        <p class="font-bold mb-2">Q: 在比較過程中，如果遇到比 Key 大的數字，我們做什麼？</p>
-                        <div class="flex gap-4">
-                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="qz2" value="1" class="w-5 h-5 text-indigo-600"> 把它往右移一格</label>
-                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="qz2" value="0" class="w-5 h-5 text-indigo-600"> 立刻把 Key 插在它左邊</label>
-                        </div>
+                        <label class="block text-slate-600 font-bold mb-1">座號</label>
+                        <input type="number" id="std-num" placeholder="例：05" class="w-full p-3 border-2 border-slate-300 rounded-lg text-lg focus:border-indigo-500 outline-none">
                     </div>
-                    <div class="pt-2">
-                        <button onclick="checkQuiz()" class="bg-yellow-500 text-white font-bold px-6 py-2 rounded-lg hover:bg-yellow-600 transition-colors">送出回答</button>
-                        <span id="quiz-feedback" class="ml-4 font-bold"></span>
+                    <div>
+                        <label class="block text-slate-600 font-bold mb-1">姓名</label>
+                        <input type="text" id="std-name" placeholder="例：王小明" class="w-full p-3 border-2 border-slate-300 rounded-lg text-lg focus:border-indigo-500 outline-none">
+                    </div>
+                    <button onclick="startQuiz()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl text-xl hover:bg-indigo-700 transition-transform active:scale-95 shadow-lg mt-4">
+                        開始測驗
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quiz Content (Hidden initially) -->
+            <div id="quiz-content" class="hidden space-y-8 max-w-3xl mx-auto">
+                
+                <!-- Info Bar -->
+                <div class="bg-indigo-900 text-white p-4 rounded-xl flex justify-between items-center shadow-lg sticky top-20 z-40">
+                    <div class="font-bold text-lg"><span id="display-std-info"></span></div>
+                    <div class="text-yellow-400 font-mono font-bold" id="quiz-timer"></div>
+                </div>
+
+                <div id="quiz-questions-container" class="space-y-8">
+                    <!-- Generated by JS -->
+                </div>
+
+                <div class="text-center pt-8 pb-12">
+                    <button onclick="submitQuiz()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 px-12 rounded-full text-2xl shadow-xl transform transition-all hover:-translate-y-1 active:translate-y-0">
+                        交卷計算成績
+                    </button>
+                </div>
+            </div>
+
+            <!-- Result Modal (Hidden) -->
+            <div id="quiz-result" class="hidden fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4">
+                <div class="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 relative">
+                    <button onclick="closeQuizResult()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                        <i data-lucide="x-circle" class="w-8 h-8"></i>
+                    </button>
+                    
+                    <div class="text-center mb-6">
+                        <h2 class="text-3xl font-black text-indigo-900 mb-2">測驗結果</h2>
+                        <div class="text-6xl font-black text-emerald-600 mb-2" id="final-score">0</div>
+                        <p class="text-slate-500">分</p>
+                    </div>
+
+                    <div class="bg-slate-100 p-4 rounded-xl mb-6 font-mono text-sm break-all select-all cursor-pointer border-2 border-slate-300" id="result-code-box" onclick="copyResultCode()">
+                        <!-- Result String -->
+                    </div>
+                    
+                    <div class="text-center mb-6">
+                        <p class="text-red-500 font-bold mb-2 text-sm">請點擊上方方框複製結果代碼，並貼給老師！</p>
+                        <button onclick="copyResultCode()" class="bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-indigo-700 flex items-center gap-2 mx-auto">
+                            <i data-lucide="copy"></i> 複製結果代碼
+                        </button>
+                    </div>
+
+                    <div class="border-t pt-6">
+                        <h3 class="font-bold text-xl text-slate-800 mb-4">答錯題目檢討</h3>
+                        <div id="wrong-answers-list" class="space-y-4 text-left">
+                            <!-- Wrong answers -->
+                        </div>
                     </div>
                 </div>
             </div>
+
         </div>
 
     </main>
 
-    <!-- Overlay for Win -->
+    <!-- Overlay for Win (Game) -->
     <div id="win-overlay" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-[100] p-4">
         <div class="bg-white rounded-3xl p-8 max-w-sm text-center pop-in border-4 border-yellow-400">
             <div class="text-6xl mb-4">🏆</div>
@@ -281,7 +294,6 @@
         // --- GLOBAL STATE ---
         const DEMO_DATA = [8, 7, 9, 6, 2];
         const GAME_DATA = [6, 9, 2, 5, 4]; // Default easy
-        // Extended datasets for levels? Keeping it simple for one file.
         
         let demoState = {
             arr: [...DEMO_DATA],
@@ -302,6 +314,41 @@
             errors: 0,
             algoStatus: 'PICK', // PICK, COMPARE, SHIFT
             selectedGap: null
+        };
+
+        // --- QUIZ DATA ---
+        const QUIZ_DATA = [
+            // True/False
+            { id: 1, type: 'tf', q: '插入排序法會先將資料分成「已排序」與「未排序」兩個區域。', ans: 'T', rationale: '正確。這是插入排序的基本概念。' },
+            { id: 2, type: 'tf', q: '插入排序在每一輪排序時，會從「未排序區的最後一個」開始比較。', ans: 'F', rationale: '錯誤。是從「未排序區的第一個」開始。' },
+            { id: 3, type: 'tf', q: '在插入排序中，已排序區的資料在每一輪結束後都保持由小到大的順序。', ans: 'T', rationale: '正確。已排序區始終保持有序。' },
+            { id: 4, type: 'tf', q: '插入排序就像整理撲克牌，一次只處理一張牌。', ans: 'T', rationale: '正確。這是最常用的類比。' },
+            { id: 5, type: 'tf', q: '插入排序法在比較時，是由左往右進行比較。', ans: 'F', rationale: '錯誤。一般是由右往左（從已排序區的最大值開始比）。' },
+            { id: 6, type: 'tf', q: '插入排序完成排序時，一共需要 N 次插入動作（N 為資料筆數）。', ans: 'F', rationale: '錯誤。第1個視為已排序，故只需 N-1 輪。' },
+            
+            // Choice
+            { id: 7, type: 'mc', q: '插入排序中，每一輪要拿來插入的數值稱為什麼？', opts: ['pivot', 'key', 'index', 'max'], ans: 'key' },
+            { id: 8, type: 'mc', q: '插入排序中，key 會與哪一個區域的資料進行比較？', opts: ['未排序區', '全部資料', '已排序區', '隨機選擇'], ans: '已排序區' },
+            { id: 9, type: 'mc', q: '若要進行「由小到大」的插入排序，當左邊的數字比 key 大時，正確的動作是？', opts: ['直接交換', '忽略不管', '將左邊的數字往右移', '將 key 丟掉'], ans: '將左邊的數字往右移' },
+            { id: 10, type: 'mc', q: '插入排序最符合下列哪一個生活情境？', opts: ['洗牌', '抽籤', '整理撲克牌手牌', '擲骰子'], ans: '整理撲克牌手牌' },
+            { id: 11, type: 'mc', q: '插入排序每一輪排序完成後，下列哪一項是正確的？', opts: ['未排序區變大', '已排序區變小', '已排序區增加一個元素', '資料順序會亂掉'], ans: '已排序區增加一個元素' },
+            { id: 12, type: 'mc', q: '若原始資料有 6 筆，插入排序最多需要幾輪插入？', opts: ['4', '5', '6', '7'], ans: '5' },
+            { id: 13, type: 'mc', q: '插入排序中，當比較到哪一種情況時會停止往左比較？', opts: ['左邊的數字比 key 大', '左邊的數字比 key 小或等於 key', '還沒比較完', '還有未排序資料'], ans: '左邊的數字比 key 小或等於 key' },
+            { id: 14, type: 'mc', q: '下列哪一項不是插入排序的特點？', opts: ['排序過程是逐步完成', '每一輪只處理一個 key', '需要大量額外記憶體', '已排序區會逐漸擴大'], ans: '需要大量額外記憶體' },
+
+            // Fill
+            { id: 15, type: 'fill', q: '插入排序一開始，會先將第 ______ 個資料視為「已排序」。', ans: ['1', '一', '第一個', '1個'] },
+            { id: 16, type: 'fill', q: '插入排序中，未排序區的第 ______ 個元素會被選為 key。', ans: ['1', '一', '第一個', '1個'] },
+            { id: 17, type: 'fill', q: '插入排序在比較時，是由 ______ 往 ______ 方向進行比較。（填方向，例如：上 下）', ans: ['右左', '右 左', '右往左', '右到左', '後前', '後 前'] },
+            { id: 18, type: 'fill', q: '當已排序區中的數字比 key ______ 時，就必須將該數字往右移。', ans: ['大', 'bigger', '>'] },
+            { id: 19, type: 'fill', q: '插入排序完成一輪後，已排序區的資料筆數會增加 ______ 筆。', ans: ['1', '一', '1筆'] },
+            { id: 20, type: 'fill', q: '插入排序常用「整理 ______ 牌」來幫助理解演算法流程。', ans: ['撲克', '撲克牌'] }
+        ];
+
+        let quizState = {
+            student: { class: '', num: '', name: '' },
+            answers: {}, // id: value
+            startTime: null
         };
 
         // --- NAVIGATION ---
@@ -347,13 +394,9 @@
             
             const { arr, i, j, key, status } = demoState;
 
-            // Render array elements with visual state
             arr.forEach((val, idx) => {
                 let type = 'unsorted';
                 let label = '';
-                
-                // Logic to visualize "holes" during shift not implemented deeply for simplicity, 
-                // instead we visualize the swap/shift logic state.
                 
                 if (idx < i) type = 'sorted';
                 
@@ -362,21 +405,15 @@
                     label = 'Key';
                 } else if (status === 'COMPARE') {
                     if (idx === j) type = 'comparing';
-                    if (idx === j+1) type = 'key'; // Visually key is floating near j
-                } else if (status === 'SHIFT') {
-                    // During shift, j+1 becomes the value of j
+                    if (idx === j+1) type = 'key';
                 }
 
-                // Override for the finalized view of the step
                 if (status === 'IDLE') {
                     if(idx < i) type = 'sorted';
                     else type = 'unsorted';
                 }
 
-                // If we are actively sorting index 'i', visual handling
                 if (status !== 'IDLE' && status !== 'NEXT' && status !== 'PICK_KEY') {
-                    // Visualizing the "gap" and "key" is tricky in static render loop.
-                    // We'll trust the flow logic to update the array data and just highlight.
                     if (idx === j) { type = 'comparing'; label = '比較中'; }
                     if (idx === j + 1 && arr[idx] === key) { type = 'key'; label = 'Key'; }
                 }
@@ -455,7 +492,7 @@
 
                 case 'SHIFT':
                     s.arr[s.j + 1] = s.arr[s.j];
-                    s.arr[s.j] = s.key; // Visually put key in gap for animation fluidity, though real algo holds it
+                    s.arr[s.j] = s.key; 
                     s.j--;
                     s.status = 'COMPARE';
                     break;
@@ -476,13 +513,9 @@
         function initGame() {
             gameState.arr = [...GAME_DATA];
             gameState.sortedCount = 1;
-            gameState.currentKeyIdx = 1; // Unsorted starts at index 1
+            gameState.currentKeyIdx = 1; 
             gameState.errors = 0;
-            gameState.mode = gameState.mode || 'drag'; // Keep current mode
-            gameState.tempKeyVal = null;
-            gameState.selectedGap = null; // For Drag mode logic
-
-            // Algo Mode specifics
+            gameState.mode = gameState.mode || 'drag'; 
             gameState.algoStatus = 'PICK';
             gameState.compareIdx = 0;
             gameState.j = 0;
@@ -497,7 +530,6 @@
 
         function setGameMode(mode) {
             gameState.mode = mode;
-            // Update UI
             document.querySelectorAll('.mode-btn').forEach(b => {
                 b.classList.remove('bg-indigo-600', 'text-white', 'ring-4', 'ring-indigo-300', 'border-indigo-800');
                 b.classList.add('bg-slate-200', 'text-slate-600', 'border-slate-400');
@@ -521,43 +553,29 @@
         function renderGame() {
             const container = document.getElementById('game-container');
             container.innerHTML = '';
-            const feedback = document.getElementById('game-feedback');
 
-            // Victory Check
             if (gameState.sortedCount >= gameState.arr.length) {
                 container.innerHTML = `<div class="text-center"><div class="text-6xl animate-bounce">🎉</div></div>`;
                 showWinOverlay();
                 return;
             }
 
-            const keyVal = gameState.arr[gameState.sortedCount]; // The value we are trying to insert
+            const keyVal = gameState.arr[gameState.sortedCount]; 
             const arr = gameState.arr;
 
             if (gameState.mode === 'drag') {
-                // DRAG MODE RENDER
-                // We show sorted items as distinct slots
-                // We show the "Key" separated
-                // User clicks Key (highlights), then clicks a "Gap" between sorted items.
-                
-                // 1. Render Sorted Area with Gaps
                 let sortedHTML = '<div class="flex items-center bg-emerald-50 p-3 rounded-xl border border-emerald-200 gap-1">';
-                
-                // Gap 0 (At the very start)
                 sortedHTML += `<div onclick="handleGapClick(-1)" class="w-4 h-24 hover:bg-yellow-200 cursor-pointer rounded transition-colors border-2 border-transparent hover:border-yellow-400 gap-slot" data-idx="-1"></div>`;
 
                 for(let i=0; i<gameState.sortedCount; i++) {
                     sortedHTML += createCardHTML(arr[i], 'sorted');
-                    // Gap i (After index i)
                     sortedHTML += `<div onclick="handleGapClick(${i})" class="w-4 h-24 hover:bg-yellow-200 cursor-pointer rounded transition-colors border-2 border-transparent hover:border-yellow-400 gap-slot" data-idx="${i}"></div>`;
                 }
                 sortedHTML += '</div>';
 
-                // 2. Render Unsorted Area
                 let unsortedHTML = '<div class="flex items-center gap-2 border-l-4 border-slate-300 pl-4">';
-                // The Key
                 unsortedHTML += `<div class="cursor-grab hover:scale-105 transition-transform" onclick="highlightGaps()">${createCardHTML(keyVal, 'key', 'KEY')}</div>`;
                 
-                // The rest
                 for(let i=gameState.sortedCount+1; i<arr.length; i++) {
                     unsortedHTML += createCardHTML(arr[i], 'unsorted');
                 }
@@ -566,44 +584,25 @@
                 container.innerHTML = sortedHTML + unsortedHTML;
             } 
             else {
-                // ALGO MODE RENDER (Linear Array)
-                // Just render the array linearly but highlight based on internal algo state
                 let html = '';
-                
-                // If we are in the middle of simulation, we might have a hole or shifted items
-                // To keep it simple for the user, we display the array as is.
-                
                 arr.forEach((val, idx) => {
                     let type = 'unsorted';
                     let label = '';
-                    
                     if (idx < gameState.sortedCount) type = 'sorted';
-
-                    // Highlighting based on logic step
                     if (gameState.algoStatus === 'PICK' && idx === gameState.sortedCount) {
                         type = 'key'; label = 'Key?';
                     }
                     else if (gameState.algoStatus !== 'PICK') {
-                        // We are active
-                        // Highlight Key
-                        // Highlight Compare target
-                        // This requires tracking where the 'key' currently is in memory vs visual
-                        // Simplified: In Algo mode, we only visualize the POINTERS.
                         if (idx === gameState.sortedCount) type = 'key';
                         if (idx === gameState.compareIdx && gameState.algoStatus === 'COMPARE') type = 'comparing';
                     }
-
                     html += createCardHTML(val, type, label);
                 });
-                
                 container.innerHTML = html;
             }
         }
 
-        // --- INTERACTION HANDLERS (DRAG MODE) ---
-        
         function highlightGaps() {
-            // Visual cue for students to know they can click gaps
             document.querySelectorAll('.gap-slot').forEach(el => {
                 el.classList.add('bg-yellow-100', 'animate-pulse');
             });
@@ -611,47 +610,27 @@
         }
 
         function handleGapClick(gapIndex) {
-            // gapIndex is the index of the element BEFORE the gap. -1 means before index 0.
-            // Logic: The key (currently at sortedCount) should be inserted at index X.
-            // The correct position is where all elements to left are <= key, and all right (up to sortedCount) are > key.
-            
             const keyVal = gameState.arr[gameState.sortedCount];
             const sortedSubArr = gameState.arr.slice(0, gameState.sortedCount);
             
-            // Find correct index
             let correctIndex = 0;
             for(let i=0; i<sortedSubArr.length; i++) {
                 if(keyVal > sortedSubArr[i]) {
                     correctIndex = i + 1;
                 }
             }
-            
-            // gapIndex -1 corresponds to insertion index 0.
-            // gapIndex 0 corresponds to insertion index 1.
             const userChosenIndex = gapIndex + 1;
 
             if (userChosenIndex === correctIndex) {
-                // Correct!
                 playFeedback(true, "正確！插入位置完美！");
-                
-                // Perform the array shift in memory
-                // Remove key from old spot
                 gameState.arr.splice(gameState.sortedCount, 1);
-                // Insert at new spot
                 gameState.arr.splice(correctIndex, 0, keyVal);
-                
                 gameState.sortedCount++;
                 document.getElementById('game-round').innerText = `${Math.min(gameState.sortedCount, gameState.arr.length-1)}/${gameState.arr.length-1}`;
-                
-                setTimeout(() => {
-                    renderGame();
-                }, 800);
+                setTimeout(() => { renderGame(); }, 800);
             } else {
-                // Wrong
                 gameState.errors++;
                 document.getElementById('game-errors').innerText = gameState.errors;
-                
-                // Hint logic
                 if (userChosenIndex < correctIndex) {
                     playFeedback(false, `錯誤！${keyVal} 比左邊的某些數字還大喔！`);
                 } else {
@@ -660,70 +639,59 @@
             }
         }
 
-        // --- INTERACTION HANDLERS (ALGO MODE) ---
-        
         function algoAction(action) {
             const feedback = document.getElementById('game-feedback');
             const arr = gameState.arr;
             
-            // Initialize round if needed
             if (gameState.algoStatus === 'PICK') {
-                gameState.key = arr[gameState.sortedCount]; // Store value
-                gameState.j = gameState.sortedCount - 1;    // Compare with left
+                gameState.key = arr[gameState.sortedCount]; 
+                gameState.j = gameState.sortedCount - 1;    
                 gameState.algoStatus = 'COMPARE';
                 renderGame();
-                
                 if (action !== 'compare') {
                     playFeedback(false, "第一步必須先「比較」！");
                     return;
                 }
-                // If compare was clicked, we proceed to logic below
             }
 
             const j = gameState.j;
             const key = gameState.key;
 
             if (action === 'compare') {
-                gameState.compareIdx = j; // Visual highlight
+                gameState.compareIdx = j; 
                 renderGame();
-                
                 if (j >= 0 && arr[j] > key) {
-                    // Logic says: Should Shift
                     feedback.innerText = `${arr[j]} > ${key}，應該右移！`;
                     gameState.expectedAction = 'shift';
                 } else {
-                    // Logic says: Found spot, Should Insert
                     feedback.innerText = (j<0) ? "比到頭了，插入！" : `${arr[j]} <= ${key}，找到位置，插入！`;
                     gameState.expectedAction = 'insert';
                 }
             }
             else if (action === 'shift') {
                 if (gameState.expectedAction === 'shift') {
-                     // Do shift visual/logic
                      arr[j+1] = arr[j];
-                     arr[j] = key; // Visually swap for clarity in this simplified mode
+                     arr[j] = key; 
                      gameState.j--;
-                     gameState.algoStatus = 'COMPARE'; // Back to compare loop
+                     gameState.algoStatus = 'COMPARE'; 
                      playFeedback(true, "右移成功！再比下一個。");
                      renderGame();
-                     // Reset expectation
                      gameState.expectedAction = null; 
                 } else {
-                    playFeedback(false, "現在還不能右移，或者應該插入了？");
+                    playFeedback(false, "不能右移！");
                     gameState.errors++;
                 }
             }
             else if (action === 'insert') {
                 if (gameState.expectedAction === 'insert') {
-                    // Finalize this round
-                    arr[j+1] = key; // Confirm placement
+                    arr[j+1] = key; 
                     gameState.sortedCount++;
                     gameState.algoStatus = 'PICK';
                     document.getElementById('game-round').innerText = `${Math.min(gameState.sortedCount, gameState.arr.length-1)}/${gameState.arr.length-1}`;
                     playFeedback(true, "插入成功！下一輪。");
                     renderGame();
                 } else {
-                    playFeedback(false, "還沒找到正確位置，不能插入！");
+                    playFeedback(false, "還沒找到正確位置！");
                     gameState.errors++;
                 }
             }
@@ -736,63 +704,6 @@
             el.className = isSuccess ? "mt-4 text-center font-bold text-lg h-8 text-emerald-600 animate-pulse" : "mt-4 text-center font-bold text-lg h-8 text-red-500 animate-shake";
         }
 
-        // --- PRACTICE & QUIZ ---
-        function checkQ1() {
-            // Correct answer for 9,7,2,5,4 after 2 rounds (sorting 9,7,2) -> 2,7,9, 5,4
-            const ans = [2, 7, 9, 5]; // First 4 digits
-            const inputs = [
-                parseInt(document.getElementById('q1-1').value),
-                parseInt(document.getElementById('q1-2').value),
-                parseInt(document.getElementById('q1-3').value)
-            ];
-            
-            if (inputs[0]===2 && inputs[1]===7 && inputs[2]===9) {
-                document.getElementById('q1-feedback').innerHTML = '<span class="text-emerald-600">正確！(2, 7, 9 排好了)</span>';
-            } else {
-                document.getElementById('q1-feedback').innerHTML = '<span class="text-red-500">錯誤。提示：前三個數 9,7,2 排好是 2,7,9</span>';
-            }
-        }
-
-        function checkQ2() {
-            // 10, 8, 9, 6, 12, 7
-            // Round 1 (key 8): 8, 10, 9...
-            // Round 2 (key 9): 8, 9, 10...
-            // Round 3 (key 6): 6, 8, 9, 10... -> Correct answer is 6, 8, 9, 10
-            const inputs = [
-                parseInt(document.getElementById('q2-1').value),
-                parseInt(document.getElementById('q2-2').value),
-                parseInt(document.getElementById('q2-3').value),
-                parseInt(document.getElementById('q2-4').value)
-            ];
-            
-            if (inputs[0]===6 && inputs[1]===8 && inputs[2]===9 && inputs[3]===10) {
-                document.getElementById('q2-feedback').innerHTML = '<span class="text-emerald-600">正確！Key=6 插入到最前面。</span>';
-            } else {
-                document.getElementById('q2-feedback').innerHTML = '<span class="text-red-500">加油！Key 是 6，它比前面 8,9,10 都小喔。</span>';
-            }
-        }
-
-        function checkQuiz() {
-            const q1 = document.querySelector('input[name="qz1"]:checked');
-            const q2 = document.querySelector('input[name="qz2"]:checked');
-            const feedback = document.getElementById('quiz-feedback');
-            
-            if (!q1 || !q2) {
-                feedback.innerText = "請回答所有問題！";
-                feedback.className = "ml-4 font-bold text-slate-500";
-                return;
-            }
-
-            if (q1.value === "1" && q2.value === "1") {
-                feedback.innerText = "全對！觀念很清楚！💯";
-                feedback.className = "ml-4 font-bold text-emerald-600";
-            } else {
-                feedback.innerText = "有答錯喔，再檢查一下規則！";
-                feedback.className = "ml-4 font-bold text-red-500";
-            }
-        }
-
-        // --- OVERLAY ---
         function showWinOverlay() {
             const overlay = document.getElementById('win-overlay');
             overlay.classList.remove('hidden');
@@ -804,7 +715,6 @@
             if(err === 0) rank = "S 級大師";
             else if(err <= 2) rank = "A 級高手";
             else if(err <= 5) rank = "B 級玩家";
-            
             document.getElementById('result-rank').innerText = rank;
         }
 
@@ -812,6 +722,188 @@
             const overlay = document.getElementById('win-overlay');
             overlay.classList.add('hidden');
             overlay.classList.remove('flex');
+        }
+
+        // --- QUIZ LOGIC ---
+
+        function startQuiz() {
+            const c = document.getElementById('std-class').value;
+            const n = document.getElementById('std-num').value;
+            const nm = document.getElementById('std-name').value;
+
+            if(!c || !n || !nm) {
+                alert("請完整填寫 班級、座號、姓名！");
+                return;
+            }
+
+            quizState.student = { class: c, num: n, name: nm };
+            quizState.startTime = new Date();
+            
+            document.getElementById('display-std-info').innerText = `${c}班 ${n}號 ${nm}`;
+            
+            // Switch view
+            document.getElementById('student-login').classList.add('hidden');
+            document.getElementById('quiz-content').classList.remove('hidden');
+
+            renderQuiz();
+        }
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-questions-container');
+            container.innerHTML = '';
+
+            // Group questions by type for headings
+            const tfQuestions = QUIZ_DATA.filter(q => q.type === 'tf');
+            const mcQuestions = QUIZ_DATA.filter(q => q.type === 'mc');
+            const fillQuestions = QUIZ_DATA.filter(q => q.type === 'fill');
+
+            // Render True/False
+            container.innerHTML += `<div class="bg-indigo-50 p-4 rounded-xl border-l-4 border-indigo-500"><h3 class="font-bold text-xl text-indigo-900">一、是非題 (每題5分)</h3></div>`;
+            tfQuestions.forEach((q, idx) => {
+                container.innerHTML += `
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="font-bold text-lg mb-4 text-slate-800"><span class="text-indigo-600 mr-2">${q.id}.</span> ${q.q}</div>
+                        <div class="flex gap-6">
+                            <label class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-slate-50 w-32 border hover:border-indigo-300">
+                                <input type="radio" name="q-${q.id}" value="T" class="w-6 h-6 text-indigo-600"> <span class="font-bold text-emerald-600">O 是</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-slate-50 w-32 border hover:border-indigo-300">
+                                <input type="radio" name="q-${q.id}" value="F" class="w-6 h-6 text-indigo-600"> <span class="font-bold text-red-500">X 否</span>
+                            </label>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Render MC
+            container.innerHTML += `<div class="bg-indigo-50 p-4 rounded-xl border-l-4 border-indigo-500 mt-8"><h3 class="font-bold text-xl text-indigo-900">二、選擇題 (每題5分)</h3></div>`;
+            mcQuestions.forEach((q, idx) => {
+                let optsHTML = '';
+                q.opts.forEach(opt => {
+                    optsHTML += `
+                        <label class="flex items-center gap-3 cursor-pointer p-3 rounded-lg hover:bg-slate-50 border border-transparent hover:border-indigo-200 transition-colors">
+                            <input type="radio" name="q-${q.id}" value="${opt}" class="w-5 h-5 text-indigo-600">
+                            <span class="text-slate-700">${opt}</span>
+                        </label>
+                    `;
+                });
+                container.innerHTML += `
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="font-bold text-lg mb-4 text-slate-800"><span class="text-indigo-600 mr-2">${q.id}.</span> ${q.q}</div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            ${optsHTML}
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Render Fill
+            container.innerHTML += `<div class="bg-indigo-50 p-4 rounded-xl border-l-4 border-indigo-500 mt-8"><h3 class="font-bold text-xl text-indigo-900">三、填空題 (每題5分)</h3></div>`;
+            fillQuestions.forEach((q, idx) => {
+                container.innerHTML += `
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="font-bold text-lg mb-4 text-slate-800"><span class="text-indigo-600 mr-2">${q.id}.</span> ${q.q}</div>
+                        <div>
+                            <input type="text" name="q-${q.id}" placeholder="請輸入答案" class="w-full md:w-1/2 p-3 border-2 border-slate-300 rounded-lg focus:border-indigo-500 outline-none">
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function submitQuiz() {
+            // Collect answers
+            let score = 0;
+            let wrongList = [];
+            
+            QUIZ_DATA.forEach(q => {
+                let userAns = '';
+                if (q.type === 'fill') {
+                    const el = document.querySelector(`input[name="q-${q.id}"]`);
+                    userAns = el ? el.value.trim() : '';
+                } else {
+                    const el = document.querySelector(`input[name="q-${q.id}"]:checked`);
+                    userAns = el ? el.value : '';
+                }
+
+                quizState.answers[q.id] = userAns;
+
+                // Check correctness
+                let isCorrect = false;
+                if (q.type === 'tf') {
+                    isCorrect = (userAns === q.ans);
+                } else if (q.type === 'mc') {
+                    isCorrect = (userAns === q.ans);
+                } else if (q.type === 'fill') {
+                    // Normalize user ans and correct ans array for loose matching
+                    const normalizedUser = userAns.replace(/\s+/g, '').toLowerCase();
+                    isCorrect = q.ans.some(a => a.replace(/\s+/g, '').toLowerCase() === normalizedUser);
+                }
+
+                if (isCorrect) {
+                    score += 5;
+                } else {
+                    // Prepare wrong list info
+                    let correctDisplay = Array.isArray(q.ans) ? q.ans[0] : (q.ans === 'T' ? 'O 是' : (q.ans === 'F' ? 'X 否' : q.ans));
+                    let rationale = q.rationale || '';
+                    wrongList.push({
+                        id: q.id,
+                        q: q.q,
+                        user: userAns || '(未作答)',
+                        correct: correctDisplay,
+                        rationale: rationale
+                    });
+                }
+            });
+
+            // Show Results
+            document.getElementById('final-score').innerText = score;
+            
+            // Generate Code
+            const timeStr = quizState.startTime.toLocaleString('zh-TW');
+            const std = quizState.student;
+            const codeObj = {
+                u: `${std.class}-${std.num}-${std.name}`,
+                s: score,
+                t: timeStr,
+                hash: btoa(encodeURIComponent(`${std.name}-${score}-${Math.random()}`)).substring(0, 10) // Fake hash for visual
+            };
+            const resultString = `【測驗結果憑證】\n姓名：${std.class}班 ${std.num}號 ${std.name}\n分數：${score} 分\n時間：${timeStr}\n驗證碼：${codeObj.hash}`;
+            
+            document.getElementById('result-code-box').innerText = resultString;
+
+            // Render Wrong Answers
+            const wrongContainer = document.getElementById('wrong-answers-list');
+            wrongContainer.innerHTML = '';
+            if (wrongList.length === 0) {
+                wrongContainer.innerHTML = '<div class="text-emerald-600 font-bold text-center">太神了！全對！💯</div>';
+            } else {
+                wrongList.forEach(w => {
+                    wrongContainer.innerHTML += `
+                        <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                            <div class="font-bold text-slate-800 mb-1">第 ${w.id} 題：${w.q}</div>
+                            <div class="text-sm text-red-600">你的回答：${w.user}</div>
+                            <div class="text-sm text-emerald-600 font-bold">正確答案：${w.correct}</div>
+                            ${w.rationale ? `<div class="text-xs text-slate-500 mt-1 bg-white p-2 rounded">解析：${w.rationale}</div>` : ''}
+                        </div>
+                    `;
+                });
+            }
+
+            document.getElementById('quiz-result').classList.remove('hidden');
+            document.getElementById('quiz-result').classList.add('flex');
+        }
+
+        function closeQuizResult() {
+             document.getElementById('quiz-result').classList.add('hidden');
+             document.getElementById('quiz-result').classList.remove('flex');
+        }
+
+        function copyResultCode() {
+            const text = document.getElementById('result-code-box').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("已複製！請貼給老師。");
+            });
         }
 
         // Start Up
