@@ -50,12 +50,13 @@
             border-color: #ee5253 !important;
         }
 
-        .en-tag {
-            background: #eee; color: #666; padding: 2px 8px; border-radius: 999px;
-            font-size: 0.7rem; font-weight: 800; text-transform: uppercase; margin-left: 4px;
-        }
-
         pre { background: #2d3436; color: #fab1a0; padding: 1rem; border-radius: 1rem; overflow-x: auto; }
+        
+        /* 試算表按鈕樣式 */
+        .sheet-link-btn {
+            background: linear-gradient(to right, #34a853, #2e7d32);
+            box-shadow: 0 4px 15px rgba(52, 168, 83, 0.3);
+        }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -78,6 +79,18 @@
 
         <!-- 區塊一：學習重點 -->
         <section id="sec-learn" class="space-y-6">
+            <!-- 新增：試算表連結按鈕 -->
+            <div class="card-3d p-6 bg-gradient-to-r from-green-50 to-emerald-50 border-l-8 border-green-500 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div>
+                    <h3 class="text-xl font-black text-green-700">📊 作答記錄查詢</h3>
+                    <p class="text-green-600 font-bold">想看自己或班上同學的測驗進度嗎？點擊右側連結前往 Google 試算表。</p>
+                </div>
+                <a href="https://docs.google.com/spreadsheets/d/1JiE4gdUnkcgmdbOHp83XdrgvRHyPXjpuk_xlM1-Tdx8/edit?usp=sharing" target="_blank" class="sheet-link-btn text-white font-black px-8 py-4 rounded-2xl flex items-center gap-2 hover:scale-105 transition-transform active:scale-95">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 16H5V5h14v14M7 10h10V7H7v3m0 4h10v-3H7v3m0 4h10v-3H7v3z"/></svg>
+                    觀看作答記錄
+                </a>
+            </div>
+
             <div class="card-3d p-8 border-t-8 border-blue-400">
                 <h2 class="text-3xl font-black text-blue-500 mb-6 flex items-center">
                     <span class="mr-2">💡</span> 什麼是插入排序？
@@ -95,7 +108,7 @@
                     <div class="space-y-4">
                         <h4 class="font-black text-pink-600 underline decoration-wavy">核心口訣：</h4>
                         <ul class="space-y-2 font-bold text-gray-600">
-                            <li>1. 最前端先當已排序。</li>
+                            <li>1. 最前端先當已排序區。</li>
                             <li>2. 拿未排序第 1 個，由右往左比。</li>
                             <li>3. 插到正確位置，重複直到完成。</li>
                         </ul>
@@ -144,7 +157,6 @@
 
         <!-- 區塊三：隨堂測驗 -->
         <section id="sec-quiz" class="hidden space-y-6">
-            <!-- 學生資訊 -->
             <div class="card-3d p-8 border-t-8 border-blue-400">
                 <h3 class="text-2xl font-black text-blue-500 mb-4">📝 學生資訊</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -160,10 +172,9 @@
                 </div>
             </div>
 
-            <!-- 測驗內容 -->
             <div class="card-3d p-8 border-t-8 border-pink-400">
                 <div id="quiz-list" class="space-y-12">
-                    <!-- 題目動態渲染 -->
+                    <!-- 題目將由 JS 生成 -->
                 </div>
                 <div class="mt-16 text-center">
                     <button onclick="handleSubmit()" id="submit-btn" class="bg-green-500 text-white text-3xl font-black py-6 px-16 rounded-3xl shadow-xl hover:bg-green-400 transition border-b-8 border-green-700 active:transform active:translate-y-2">
@@ -172,9 +183,13 @@
                 </div>
             </div>
         </section>
+
+        <footer class="text-center text-white/70 font-bold py-6">
+            &copy; 2024 插入排序自學互動網 | 資訊科技自主學習教材
+        </footer>
     </div>
 
-    <!-- 彈窗 -->
+    <!-- 結果彈窗 -->
     <div id="modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-[3rem] p-10 max-w-lg w-full text-center shadow-2xl border-8 border-pink-100">
             <div id="modalEmoji" class="text-8xl mb-6">🎉</div>
@@ -190,7 +205,7 @@
         // ==========================================
         const GAS_URL = 'https://script.google.com/macros/s/AKfycbxUzcQq9P8ypDtxCzKLa5yftm-ddbscjWM_9w6STvd05D9et9GF9SroLW0_xwk7L-GDyA/exec';
         
-        // 🔐 加密答案庫
+        // 🔐 加密答案
         const _O_ = {
             "a1":"dl90", "a2":"dl9m", "a3":"dl90", "a4":"dl90", "a5":"dl9m", "a6":"dl9m",
             "a7":"dl9i", "a8":"dl9j", "a9":"dl9j", "a10":"dl9j", "a11":"dl9j", "a12":"dl9i", "a13":"dl9i", "a14":"dl9j"
@@ -198,7 +213,7 @@
         const _MAP_ = { "dl90":"v_t", "dl9m":"v_f", "dl9h":"v_a", "dl9i":"v_b", "dl9j":"v_c", "dl9k":"v_d" };
 
         // ==========================================
-        // 分頁切換
+        // 分頁控制
         // ==========================================
         function switchTab(tabId) {
             document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
@@ -209,7 +224,7 @@
         }
 
         // ==========================================
-        // 互動遊戲模組 (模式A)
+        // 互動遊戲 (模式A)
         // ==========================================
         let gameData = [8, 7, 9, 6, 5];
         let sortedCount = 1;
@@ -239,9 +254,9 @@
 
             const controls = document.getElementById('game-controls');
             if(sortedCount < gameData.length) {
-                controls.innerHTML = `<div class="flex gap-2">${Array.from({length: sortedCount + 1}).map((_, i) => `<button onclick="playInsert(${i})" class="bg-indigo-500 text-white w-10 h-10 rounded-lg font-bold hover:bg-indigo-400 shadow-md">${i}</button>`).join('')}</div>`;
+                controls.innerHTML = `<div class="flex gap-2">${Array.from({length: sortedCount + 1}).map((_, i) => `<button onclick="playInsert(${i})" class="bg-indigo-500 text-white w-10 h-10 rounded-lg font-bold hover:bg-indigo-400 shadow-md transition-colors">${i}</button>`).join('')}</div>`;
             } else {
-                controls.innerHTML = `<button onclick="initGame()" class="bg-blue-500 text-white px-6 py-2 rounded-xl font-bold">重新挑戰</button>`;
+                controls.innerHTML = `<button onclick="initGame()" class="bg-blue-500 text-white px-6 py-2 rounded-xl font-bold">🎉 全部排序完成了！重新挑戰？</button>`;
             }
         }
 
@@ -262,12 +277,12 @@
                 document.getElementById('game-feedback').innerText = "✔️ 正確！插入到位置 " + pos;
                 renderGame();
             } else {
-                document.getElementById('game-feedback').innerText = "❌ 這裡是索引 " + pos + "，位置不對喔！";
+                document.getElementById('game-feedback').innerText = "❌ 位置不對喔！請檢查左側大小關係。";
             }
         }
 
         // ==========================================
-        // 測驗模組與 GAS 送出
+        // 測驗與 GAS 串接
         // ==========================================
         const questions = [
             { id: 1, type: 'tf', text: "插入排序法會先將資料分成「已排序」與「未排序」兩個區域。" },
@@ -315,13 +330,13 @@
             const sno = document.getElementById('stu-no').value;
             const name = document.getElementById('stu-name').value;
 
-            if(!cls || !sno || !name) { alert("請填寫班級、座號與姓名！"); return; }
+            if(!cls || !sno || !name) { alert("資訊未填寫完整喔！"); return; }
 
             let correctCount = 0;
             let results = [];
             for(let i=1; i<=14; i++) {
                 const sel = document.querySelector(`input[name="q${i}"]:checked`);
-                if(!sel) { alert(`第 ${i} 題還沒寫喔！`); return; }
+                if(!sel) { alert(`第 ${i} 題還沒作答！`); return; }
                 if(sel.value === _MAP_[_O_[`a${i}`]]) {
                     correctCount++;
                     results.push(`Q${i}:✔️`);
@@ -333,24 +348,21 @@
             const score = Math.round((correctCount/14)*100);
             const detailStr = results.join(' ');
 
-            // UI 狀態切換
             const btn = document.getElementById('submit-btn');
             btn.disabled = true;
-            btn.innerText = "資料上傳中...";
+            btn.innerText = "上傳中...";
 
-            // 送往 GAS
             const params = new URLSearchParams({
                 className: cls, seatNumber: sno, studentName: name,
-                score: score, details: detailStr, sortType: '插入排序_完整教學版'
+                score: score, details: detailStr, sortType: '插入排序_互動教學版'
             });
 
             try {
-                // 使用 no-cors 模式發送，避免跨域報錯
                 await fetch(GAS_URL, { method: 'POST', body: params, mode: 'no-cors' });
                 showFinalResult(score, name, detailStr);
             } catch (e) {
                 console.error(e);
-                showFinalResult(score, name, detailStr); // 失敗仍顯示本地結果
+                showFinalResult(score, name, detailStr);
             }
         }
 
@@ -360,11 +372,11 @@
             const title = document.getElementById('modalTitle');
             const msg = document.getElementById('modalMsg');
 
-            if(score === 100) { emoji.innerText="👑"; title.innerText="完美通關！"; }
-            else if(score >= 60) { emoji.innerText="⭐"; title.innerText="不錯喔！"; }
-            else { emoji.innerText="💪"; title.innerText="再接再厲！"; }
+            if(score === 100) { emoji.innerText="👑"; title.innerText="滿分！太優秀了！"; }
+            else if(score >= 60) { emoji.innerText="⭐"; title.innerText="挑戰成功！"; }
+            else { emoji.innerText="💪"; title.innerText="再加油，你可以的！"; }
 
-            msg.innerText = `${name} 同學你好！\n你的分數是：${score} 分\n\n${details}`;
+            msg.innerText = `${name} 同學，作答完畢！\n總分：${score} 分\n\n${details}`;
             modal.classList.remove('hidden');
         }
 
