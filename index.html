@@ -3,983 +3,377 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>插入排序法大挑戰 | Insertion Sort Challenge</title>
+    <title>插入排序法 (Insertion Sort) - 互動自學與評量系統</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Noto Sans TC', sans-serif; }
-        .card-shadow { box-shadow: 4px 4px 0px 0px rgba(0,0,0,0.2); }
-        .card-active { transform: translateY(-10px) scale(1.05); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); border-color: #FBBF24; border-width: 4px; }
-        .transition-all-300 { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #555; }
-
-        @keyframes popIn {
-            0% { transform: scale(0); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+        :root {
+            --primary-yellow: #FFD93D;
+            --primary-pink: #FF6B6B;
+            --primary-blue: #4D96FF;
+            --primary-green: #6BCB77;
         }
-        .pop-in { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        
-        .slot-highlight { background-color: #FEF3C7; border: 2px dashed #F59E0B; }
-        .sorted-bg { background-color: #D1FAE5; border: 2px solid #10B981; }
-        .unsorted-bg { background-color: #F3F4F6; border: 2px dashed #9CA3AF; }
+
+        body {
+            font-family: 'Nunito', "Microsoft JhengHei", sans-serif;
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        .card-3d {
+            background: white;
+            border-radius: 2rem;
+            border-bottom: 8px solid rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+        }
+
+        .floating { animation: float 4s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+
+        .tab-btn.active {
+            background-color: var(--primary-pink);
+            color: white;
+            transform: translateY(-4px);
+            border-bottom: 4px solid #ee5253;
+        }
+
+        .sort-item {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+        }
+
+        input[type="radio"] { display: none; }
+        input[type="radio"]:checked + .opt-ui {
+            background-color: var(--primary-pink) !important;
+            color: white !important;
+            border-color: #ee5253 !important;
+        }
+
+        .en-tag {
+            background: #eee; color: #666; padding: 2px 8px; border-radius: 999px;
+            font-size: 0.7rem; font-weight: 800; text-transform: uppercase; margin-left: 4px;
+        }
+
+        pre { background: #2d3436; color: #fab1a0; padding: 1rem; border-radius: 1rem; overflow-x: auto; }
     </style>
 </head>
-<body class="min-h-screen text-slate-800 selection:bg-yellow-200"
-style="
-background:
-linear-gradient(135deg,#fef9ff 0%,#eef2ff 40%,#ecfeff 70%,#f0fdf4 100%);
-background-attachment: fixed;">
+<body class="p-4 md:p-8">
 
-    <!-- Navbar -->
-    <nav class="bg-indigo-600 text-white p-4 sticky top-0 z-50 shadow-lg border-b-4 border-indigo-800">
-        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-2">
-                <span class="text-3xl">🃏</span>
-                <h1 class="text-2xl font-black tracking-wider">插入排序法大挑戰</h1>
-            </div>
-            <div class="flex gap-2 bg-indigo-700 p-1 rounded-lg">
-                <button onclick="switchTab('learn')" id="btn-learn" class="tab-btn px-4 py-2 rounded font-bold transition-all bg-yellow-400 text-indigo-900 shadow-md transform scale-105">教學區</button>
-                <button onclick="switchTab('play')" id="btn-play" class="tab-btn px-4 py-2 rounded font-bold transition-all hover:bg-indigo-500 text-indigo-100">互動闖關</button>
-                <button onclick="switchTab('quiz')" id="btn-quiz" class="tab-btn px-4 py-2 rounded font-bold transition-all hover:bg-indigo-500 text-indigo-100">隨堂測驗</button>
-            </div>
-        </div>
-    </nav>
+    <div class="max-w-5xl mx-auto space-y-8">
+        <!-- 標題區 -->
+        <header class="card-3d p-8 text-center floating">
+            <h1 class="text-4xl md:text-6xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-yellow-500 font-['ZCOOL_KuaiLe']">
+                插入排序自主學習網
+            </h1>
+            <p class="text-gray-500 font-bold tracking-widest uppercase">Insertion Sort Learning Hub</p>
+        </header>
 
-    <main class="max-w-6xl mx-auto p-4 md:p-6 pb-20">
+        <!-- 分頁導覽 -->
+        <nav class="flex flex-wrap justify-center gap-4">
+            <button onclick="switchTab('learn')" id="tab-learn" class="tab-btn active px-8 py-3 rounded-2xl font-black shadow-lg bg-white transition">📚 學習重點</button>
+            <button onclick="switchTab('play')" id="tab-play" class="tab-btn px-8 py-3 rounded-2xl font-black shadow-lg bg-white transition">🎮 互動操作</button>
+            <button onclick="switchTab('quiz')" id="tab-quiz" class="tab-btn px-8 py-3 rounded-2xl font-black shadow-lg bg-white transition">📝 隨堂測驗</button>
+        </nav>
 
-        <!-- SECTION 1: LEARN -->
-        <div id="view-learn" class="view-section space-y-6">
-            <!-- Concept Cards -->
-            <div class="grid md:grid-cols-3 gap-4">
-                <div class="bg-white p-5 rounded-xl border-2 border-indigo-100 shadow-sm hover:shadow-md transition-shadow">
-                    <div class="text-indigo-600 mb-2"><i data-lucide="brain-circuit" class="w-8 h-8"></i></div>
-                    <h3 class="text-lg font-bold mb-2">什麼是插入排序？</h3>
-                    <p class="text-slate-600 text-sm leading-relaxed">就像整理撲克牌！把牌分成「已排序」和「未排序」，每次拿一張未排序的牌，插進已排序的正確位置。</p>
-                </div>
-                <div class="bg-white p-5 rounded-xl border-2 border-indigo-100 shadow-sm hover:shadow-md transition-shadow">
-                    <div class="text-pink-500 mb-2"><i data-lucide="list-ordered" class="w-8 h-8"></i></div>
-                    <h3 class="text-lg font-bold mb-2">三大規則口訣</h3>
-                    <ol class="list-decimal list-inside text-slate-600 text-sm space-y-1">
-                        <li><span class="font-bold text-emerald-600">最前端</span>先當已排序</li>
-                        <li>拿<span class="font-bold text-gray-500">未排序</span>第 1 個當 Key</li>
-                        <li>從<span class="font-bold text-indigo-600">右往左</span>比，插進正確位置</li>
-                    </ol>
-                </div>
-                <div class="bg-white p-5 rounded-xl border-2 border-indigo-100 shadow-sm hover:shadow-md transition-shadow">
-                    <div class="text-emerald-500 mb-2"><i data-lucide="play-circle" class="w-8 h-8"></i></div>
-                    <h3 class="text-lg font-bold mb-2">演算法邏輯</h3>
-                    <div class="bg-slate-800 text-green-400 p-3 rounded-lg text-xs font-mono overflow-x-auto leading-relaxed shadow-inner">
-                        <p><span class="text-pink-400">for</span> i = 1 <span class="text-pink-400">to</span> n-1 <span class="text-slate-500">// 從第 2 張牌開始</span></p>
-                        <p class="pl-4">key = A[i] <span class="text-slate-500">// 拿出這張牌 (Key)</span></p>
-                        <p class="pl-4">j = i - 1 <span class="text-slate-500">// 準備跟左邊的比</span></p>
-                        <p class="pl-4"><span class="text-pink-400">while</span> j >= 0 <span class="text-pink-400">and</span> A[j] > key</p>
-                        <p class="pl-8">A[j+1] = A[j] <span class="text-slate-500">// 比 Key 大就往右移</span></p>
-                        <p class="pl-8">j = j - 1 <span class="text-slate-500">// 再看更左邊那張</span></p>
-                        <p class="pl-4">A[j+1] = key <span class="text-slate-500">// 找到位置，插入！</span></p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Demo Stage -->
-            <div class="bg-white p-6 rounded-2xl shadow-lg border-2 border-slate-200">
-                <div class="flex justify-between items-center mb-6 border-b pb-4">
-                    <h2 class="text-xl font-bold text-slate-700 flex items-center gap-2">
-                        <i data-lucide="monitor-play"></i> 
-                        動畫演示 (Demo)
-                    </h2>
-                    <div class="flex gap-2">
-                        <button onclick="resetDemo()" class="bg-slate-200 hover:bg-slate-300 px-3 py-1 rounded text-sm font-bold text-slate-700 transition-colors">重新開始</button>
-                        <button id="demo-play-btn" onclick="toggleDemoAutoPlay()" class="bg-emerald-500 hover:bg-emerald-600 px-4 py-1 rounded text-sm font-bold text-white transition-colors flex items-center gap-1">
-                            <i data-lucide="play" class="w-4 h-4"></i> 播放
-                        </button>
-                        <button onclick="stepDemo()" class="bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded text-sm font-bold text-white transition-colors">下一步</button>
-                    </div>
-                </div>
-
-                <!-- Explanation Box -->
-                <div id="demo-message" class="bg-amber-50 text-amber-800 p-3 rounded-lg border border-amber-200 mb-6 text-center font-bold text-lg min-h-[3.5rem] flex items-center justify-center">
-                    準備開始...
-                </div>
-
-                <!-- Visualization Area -->
-                <div class="relative min-h-[200px] flex justify-center items-end pb-10 gap-2 md:gap-4 select-none" id="demo-container">
-                    <!-- Cards will be injected here -->
-                </div>
-
-                <!-- Legend -->
-                <div class="flex flex-wrap justify-center gap-4 mt-4 text-xs font-bold text-slate-500">
-                    <div class="flex items-center gap-1"><div class="w-4 h-4 bg-emerald-100 border-2 border-emerald-500 rounded"></div> 已排序區</div>
-                    <div class="flex items-center gap-1"><div class="w-4 h-4 bg-white border-2 border-slate-300 rounded"></div> 未排序區</div>
-                    <div class="flex items-center gap-1"><div class="w-4 h-4 bg-yellow-100 border-2 border-yellow-500 rounded"></div> 當前 Key</div>
-                    <div class="flex items-center gap-1"><div class="w-4 h-4 bg-blue-100 border-2 border-blue-500 rounded"></div> 比較對象</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- SECTION 2: PLAY (INTERACTIVE) -->
-        <div id="view-play" class="view-section hidden space-y-6">
-            
-            <!-- Mode Selection -->
-            <div class="flex justify-center gap-4 mb-4">
-                <button onclick="setGameMode('drag')" id="mode-drag" class="mode-btn px-6 py-3 rounded-xl border-b-4 border-indigo-800 bg-indigo-600 text-white font-bold text-lg hover:translate-y-1 transition-all shadow-lg w-1/2 md:w-auto active-mode ring-4 ring-offset-2 ring-indigo-300">
-                    玩法 A: 拖曳插入
-                </button>
-                <button onclick="setGameMode('algo')" id="mode-algo" class="mode-btn px-6 py-3 rounded-xl border-b-4 border-slate-400 bg-slate-200 text-slate-600 font-bold text-lg hover:translate-y-1 transition-all shadow-lg w-1/2 md:w-auto">
-                    玩法 B: 演算法三鍵
-                </button>
-            </div>
-
-            <div class="bg-white p-6 rounded-2xl shadow-lg border-2 border-slate-200 min-h-[400px]">
-                <div class="flex justify-between items-center mb-6">
-                    <div>
-                        <h2 class="text-xl font-bold text-slate-700" id="game-title">拖曳挑戰</h2>
-                        <p class="text-slate-500 text-sm" id="game-instruction">點擊黃色 Key，再點擊綠色區域中的正確空位插入。</p>
-                    </div>
-                    <div class="flex gap-4 text-center">
-                        <div class="bg-slate-100 p-2 rounded-lg min-w-[80px]">
-                            <div class="text-xs text-slate-500 font-bold uppercase">Round</div>
-                            <div class="text-xl font-black text-indigo-600" id="game-round">1/5</div>
-                        </div>
-                        <div class="bg-slate-100 p-2 rounded-lg min-w-[80px]">
-                            <div class="text-xs text-slate-500 font-bold uppercase">Errors</div>
-                            <div class="text-xl font-black text-red-500" id="game-errors">0</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Game Area -->
-                <div id="game-container" class="relative bg-slate-50 rounded-xl border-2 border-slate-200 p-4 md:p-8 min-h-[250px] flex justify-center items-center gap-3">
-                    <!-- Game elements injected here -->
-                </div>
-
-                <!-- Algo Mode Controls (Hidden by default) -->
-                <div id="algo-controls" class="hidden mt-6 grid grid-cols-3 gap-4 max-w-lg mx-auto">
-                    <button onclick="algoAction('compare')" class="bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl border-b-4 border-blue-700 transition-all flex flex-col items-center gap-1 group">
-                        <i data-lucide="eye" class="group-hover:scale-110 transition-transform"></i>
-                        1. 比較左邊
-                    </button>
-                    <button onclick="algoAction('shift')" class="bg-purple-500 hover:bg-purple-600 active:bg-purple-700 text-white font-bold py-3 px-4 rounded-xl border-b-4 border-purple-700 transition-all flex flex-col items-center gap-1 group">
-                        <i data-lucide="arrow-right-circle" class="group-hover:scale-110 transition-transform"></i>
-                        2. 右移一格
-                    </button>
-                    <button onclick="algoAction('insert')" class="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl border-b-4 border-emerald-700 transition-all flex flex-col items-center gap-1 group">
-                        <i data-lucide="arrow-down-circle" class="group-hover:scale-110 transition-transform"></i>
-                        3. 插入 Key
-                    </button>
-                </div>
-                
-                <div id="game-feedback" class="mt-4 text-center font-bold text-lg h-8 text-indigo-600"></div>
-                
-                <div class="mt-6 flex justify-center">
-                     <button onclick="initGame()" class="bg-slate-800 text-white px-6 py-2 rounded-full font-bold hover:bg-slate-700 transition-colors shadow-lg flex items-center gap-2">
-                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i> 重置關卡
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- SECTION 3: QUIZ (Student Info + 20 Questions) -->
-        <div id="view-quiz" class="view-section hidden space-y-6">
-            
-            <!-- Student Login / Info -->
-            <div id="student-login" class="bg-white p-8 rounded-2xl shadow-xl border-4 border-indigo-200 max-w-lg mx-auto">
-                <h2 class="text-2xl font-black text-indigo-800 mb-6 text-center flex items-center justify-center gap-2">
-                    <i data-lucide="user-circle-2"></i> 學生資料登入
+        <!-- 區塊一：學習重點 -->
+        <section id="sec-learn" class="space-y-6">
+            <div class="card-3d p-8 border-t-8 border-blue-400">
+                <h2 class="text-3xl font-black text-blue-500 mb-6 flex items-center">
+                    <span class="mr-2">💡</span> 什麼是插入排序？
                 </h2>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-slate-600 font-bold mb-1">班級</label>
-                        <input type="text" id="std-class" placeholder="例：801" class="w-full p-3 border-2 border-slate-300 rounded-lg text-lg focus:border-indigo-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-slate-600 font-bold mb-1">座號</label>
-                        <input type="number" id="std-num" placeholder="例：05" class="w-full p-3 border-2 border-slate-300 rounded-lg text-lg focus:border-indigo-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-slate-600 font-bold mb-1">姓名</label>
-                        <input type="text" id="std-name" placeholder="例：王小明" class="w-full p-3 border-2 border-slate-300 rounded-lg text-lg focus:border-indigo-500 outline-none">
-                    </div>
-                    <button onclick="startQuiz()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl text-xl hover:bg-indigo-700 transition-transform active:scale-95 shadow-lg mt-4">
-                        開始測驗
-                    </button>
-                </div>
-            </div>
-
-            <!-- Quiz Content (Hidden initially) -->
-            <div id="quiz-content" class="hidden space-y-8 max-w-3xl mx-auto">
-                
-                <!-- Info Bar -->
-                <div class="bg-indigo-900 text-white p-4 rounded-xl flex justify-between items-center shadow-lg sticky top-20 z-40">
-                    <div class="font-bold text-lg"><span id="display-std-info"></span></div>
-                    <div class="text-yellow-400 font-mono font-bold" id="quiz-timer"></div>
-                </div>
-
-                <div id="quiz-questions-container" class="space-y-8">
-                    <!-- Generated by JS -->
-                </div>
-
-                <div class="text-center pt-8 pb-12">
-                    <button onclick="submitQuiz()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 px-12 rounded-full text-2xl shadow-xl transform transition-all hover:-translate-y-1 active:translate-y-0">
-                        交卷計算成績
-                    </button>
-                </div>
-            </div>
-
-            <!-- Result Modal (Hidden) -->
-            <div id="quiz-result" class="hidden fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4">
-                <div class="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 relative">
-                    <button onclick="closeQuizResult()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
-                        <i data-lucide="x-circle" class="w-8 h-8"></i>
-                    </button>
-                    
-                    <div class="text-center mb-6">
-                        <h2 class="text-3xl font-black text-indigo-900 mb-2">測驗結果</h2>
-                        <div class="text-6xl font-black text-emerald-600 mb-2" id="final-score">0</div>
-                        <p class="text-slate-500">分</p>
-                    </div>
-
-                    <div class="bg-slate-100 p-4 rounded-xl mb-6 font-mono text-sm break-all select-all cursor-pointer border-2 border-slate-300" id="result-code-box" onclick="copyResultCode()">
-                        <!-- Result String -->
-                    </div>
-                    
-                    <div class="text-center mb-6">
-                        <p class="text-red-500 font-bold mb-2 text-sm">請點擊上方方框複製結果代碼，並貼給老師！</p>
-                        <button onclick="copyResultCode()" class="bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-indigo-700 flex items-center gap-2 mx-auto">
-                            <i data-lucide="copy"></i> 複製結果代碼
-                        </button>
-                    </div>
-
-                    <div class="border-t pt-6">
-                        <h3 class="font-bold text-xl text-slate-800 mb-4">答錯題目檢討</h3>
-                        <div id="wrong-answers-list" class="space-y-4 text-left">
-                            <!-- Wrong answers -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <p class="text-xl font-bold text-gray-700 bg-yellow-50 p-4 rounded-xl border-l-4 border-yellow-400">
+                            「把資料分成<span class="text-green-600">已排序</span>與<span class="text-gray-400">未排序</span>，每次把未排序的第一個，插進已排序的正確位置。」
+                        </p>
+                        <div class="p-4 bg-blue-50 rounded-xl border-l-4 border-blue-400">
+                            <h4 class="font-black text-blue-700 mb-2">🃏 撲克牌類比</h4>
+                            <p class="text-gray-600 font-bold">就像整理手牌：一張一張摸牌、比較大小、找到位置後插進去。跟插入排序流程完全一樣！</p>
                         </div>
                     </div>
+                    <div class="space-y-4">
+                        <h4 class="font-black text-pink-600 underline decoration-wavy">核心口訣：</h4>
+                        <ul class="space-y-2 font-bold text-gray-600">
+                            <li>1. 最前端先當已排序。</li>
+                            <li>2. 拿未排序第 1 個，由右往左比。</li>
+                            <li>3. 插到正確位置，重複直到完成。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="card-3d p-8 border-t-8 border-indigo-400">
+                <h2 class="text-3xl font-black text-indigo-500 mb-6">💻 演算法詳解</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="text-gray-600 font-bold leading-relaxed">
+                        <ol class="list-decimal list-inside space-y-2">
+                            <li>由第 2 個元素開始當作 <span class="text-pink-500 font-black">Key</span>。</li>
+                            <li>往左掃描已排序區。</li>
+                            <li>若左邊元素 &gt; Key，則左邊元素往右移。</li>
+                            <li>直到遇到 ≤ Key 的元素，將 Key 放入空位。</li>
+                        </ol>
+                    </div>
+                    <pre><code>for i = 1 to n-1
+  key = A[i]
+  j = i - 1
+  while j >= 0 and A[j] > key
+    A[j+1] = A[j]
+    j = j - 1
+  A[j+1] = key</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- 區塊二：互動操作 -->
+        <section id="sec-play" class="hidden space-y-6">
+            <div class="card-3d p-8 border-t-8 border-green-400 text-center">
+                <h2 class="text-3xl font-black text-green-600 mb-6">🎮 拖曳插入挑戰</h2>
+                <p class="mb-4 text-gray-500 font-bold text-lg">請根據插入排序邏輯，將發光的 <span class="text-pink-500">Key</span> 插入正確索引位置！</p>
+                <div id="game-container" class="bg-gray-100 p-8 rounded-[2rem] flex flex-col items-center min-h-[300px]">
+                    <div id="sort-display" class="flex gap-4 mb-10"></div>
+                    <div id="game-controls" class="space-y-4"></div>
+                    <div id="game-feedback" class="mt-6 font-black text-xl text-pink-500"></div>
+                </div>
+                <div class="mt-8 flex justify-around text-gray-500 font-black">
+                    <div>比較：<span id="stat-cmp" class="text-blue-500">0</span></div>
+                    <div>移動：<span id="stat-move" class="text-green-500">0</span></div>
+                    <div>回合：<span id="stat-round" class="text-pink-500">1</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 區塊三：隨堂測驗 -->
+        <section id="sec-quiz" class="hidden space-y-6">
+            <!-- 學生資訊 -->
+            <div class="card-3d p-8 border-t-8 border-blue-400">
+                <h3 class="text-2xl font-black text-blue-500 mb-4">📝 學生資訊</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <select id="stu-class" class="p-4 bg-gray-100 rounded-2xl font-bold outline-none focus:ring-4 focus:ring-blue-300">
+                        <option value="">選擇班級...</option>
+                        <option value="801">801 班</option>
+                        <option value="802">802 班</option>
+                        <option value="803">803 班</option>
+                        <option value="804">804 班</option>
+                    </select>
+                    <input type="number" id="stu-no" placeholder="座號" class="p-4 bg-gray-100 rounded-2xl font-bold outline-none focus:ring-4 focus:ring-blue-300">
+                    <input type="text" id="stu-name" placeholder="姓名" class="p-4 bg-gray-100 rounded-2xl font-bold outline-none focus:ring-4 focus:ring-blue-300">
                 </div>
             </div>
 
-        </div>
-
-    </main>
-
-    <!-- Overlay for Win (Game) -->
-    <div id="win-overlay" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-[100] p-4">
-        <div class="bg-white rounded-3xl p-8 max-w-sm text-center pop-in border-4 border-yellow-400">
-            <div class="text-6xl mb-4">🏆</div>
-            <h2 class="text-3xl font-black text-indigo-900 mb-2">恭喜完成！</h2>
-            <p class="text-slate-600 mb-6">你已經掌握了插入排序法的精髓！</p>
-            <div class="bg-slate-100 p-4 rounded-xl mb-6">
-                <div class="flex justify-between border-b border-slate-300 pb-2 mb-2">
-                    <span>錯誤次數</span>
-                    <span id="result-errors" class="font-bold text-red-500">0</span>
+            <!-- 測驗內容 -->
+            <div class="card-3d p-8 border-t-8 border-pink-400">
+                <div id="quiz-list" class="space-y-12">
+                    <!-- 題目動態渲染 -->
                 </div>
-                <div class="flex justify-between">
-                    <span>評價</span>
-                    <span id="result-rank" class="font-bold text-emerald-600">S 級大師</span>
+                <div class="mt-16 text-center">
+                    <button onclick="handleSubmit()" id="submit-btn" class="bg-green-500 text-white text-3xl font-black py-6 px-16 rounded-3xl shadow-xl hover:bg-green-400 transition border-b-8 border-green-700 active:transform active:translate-y-2">
+                        🚀 交卷評分 SUBMIT
+                    </button>
                 </div>
             </div>
-            <div class="flex gap-2 justify-center">
-                <button onclick="closeOverlay()" class="bg-slate-200 text-slate-700 font-bold px-6 py-3 rounded-xl hover:bg-slate-300">關閉</button>
-                <button onclick="initGame(); closeOverlay()" class="bg-indigo-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-indigo-700 shadow-lg border-b-4 border-indigo-800 active:border-b-0 active:translate-y-1">再玩一次</button>
-            </div>
+        </section>
+    </div>
+
+    <!-- 彈窗 -->
+    <div id="modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-[3rem] p-10 max-w-lg w-full text-center shadow-2xl border-8 border-pink-100">
+            <div id="modalEmoji" class="text-8xl mb-6">🎉</div>
+            <h3 id="modalTitle" class="text-3xl font-black mb-4">結果</h3>
+            <p id="modalMsg" class="text-lg font-bold text-gray-600 mb-8 whitespace-pre-line"></p>
+            <button onclick="closeModal()" class="bg-blue-500 text-white font-black py-3 px-10 rounded-xl shadow-lg hover:bg-blue-400">了解！</button>
         </div>
     </div>
 
     <script>
-        // Init Icons
-        lucide.createIcons();
-
-        // --- GLOBAL STATE ---
-        const DEMO_DATA = [8, 7, 9, 6, 2];
-        const GAME_DATA = [6, 9, 2, 5, 4]; // Default easy
+        // ==========================================
+        // 配置與 GAS 連結
+        // ==========================================
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbxUzcQq9P8ypDtxCzKLa5yftm-ddbscjWM_9w6STvd05D9et9GF9SroLW0_xwk7L-GDyA/exec';
         
-        let demoState = {
-            arr: [...DEMO_DATA],
-            i: 1, // Start from index 1 (rule 1)
-            j: 0,
-            key: null,
-            status: 'IDLE', // IDLE, PICK_KEY, COMPARE, SHIFT, INSERT, NEXT
-            timer: null
+        // 🔐 加密答案庫
+        const _O_ = {
+            "a1":"dl90", "a2":"dl9m", "a3":"dl90", "a4":"dl90", "a5":"dl9m", "a6":"dl9m",
+            "a7":"dl9i", "a8":"dl9j", "a9":"dl9j", "a10":"dl9j", "a11":"dl9j", "a12":"dl9i", "a13":"dl9i", "a14":"dl9j"
         };
+        const _MAP_ = { "dl90":"v_t", "dl9m":"v_f", "dl9h":"v_a", "dl9i":"v_b", "dl9j":"v_c", "dl9k":"v_d" };
 
-        let gameState = {
-            arr: [],
-            mode: 'drag', // 'drag' or 'algo'
-            sortedCount: 1, // Index boundary between sorted/unsorted
-            currentKeyIdx: 1, // Original index of current key
-            tempKeyVal: null,
-            compareIdx: 0,
-            errors: 0,
-            algoStatus: 'PICK', // PICK, COMPARE, SHIFT
-            selectedGap: null
-        };
-
-        // --- QUIZ DATA ---
-        const QUIZ_DATA = [
-
-{ id: 1, type: 'tf', q: '插入排序法會先將資料分成「已排序」與「未排序」兩個區域。', ans: 'VA==', rationale: '正確。這是插入排序的基本概念。' },
-
-{ id: 2, type: 'tf', q: '插入排序在每一輪排序時，會從「未排序區的最後一個」開始比較。', ans: 'Rg==', rationale: '錯誤。是從「未排序區的第一個」開始。' },
-
-{ id: 3, type: 'tf', q: '在插入排序中，已排序區的資料在每一輪結束後都保持由小到大的順序。', ans: 'VA==', rationale: '正確。已排序區始終保持有序。' },
-
-{ id: 4, type: 'tf', q: '插入排序就像整理撲克牌，一次只處理一張牌。', ans: 'VA==', rationale: '正確。這是最常用的類比。' },
-
-{ id: 5, type: 'tf', q: '插入排序法在比較時，是由左往右進行比較。', ans: 'Rg==', rationale: '錯誤。一般是由右往左。' },
-
-{ id: 6, type: 'tf', q: '插入排序完成排序時，一共需要 N 次插入動作（N 為資料筆數）。', ans: 'Rg==', rationale: '錯誤。只需要 N-1 輪。' },
-
-// Choice
-
-{ id: 7, type: 'mc', q: '插入排序中，每一輪要拿來插入的數值稱為什麼？',
-opts: ['pivot', 'key', 'index', 'max'], ans: 'a2V5' },
-
-{ id: 8, type: 'mc', q: '插入排序中，key 會與哪一個區域的資料進行比較？',
-opts: ['未排序區', '全部資料', '已排序區', '隨機選擇'], ans: '5bey5o6S5Yy6' },
-
-{ id: 9, type: 'mc', q: '若要進行「由小到大」的插入排序，當左邊的數字比 key 大時，正確的動作是？',
-opts: ['直接交換', '忽略不管', '將左邊的數字往右移', '將 key 丟掉'],
-ans: '5bCG5bem6YKK55qE5pW45a2X5b6A5Y+z56e7' },
-
-{ id: 10, type: 'mc', q: '插入排序最符合下列哪一個生活情境？',
-opts: ['洗牌', '抽籤', '整理撲克牌手牌', '擲骰子'],
-ans: '5pW05o6S5pKz5YWL54mM5omL54mM' },
-
-{ id: 11, type: 'mc', q: '插入排序每一輪排序完成後，下列哪一項是正確的？',
-opts: ['未排序區變大', '已排序區變小', '已排序區增加一個元素', '資料順序會亂掉'],
-ans: '5bey5o6S5Yy65aKe5Yqg5LiA5YCL5YWD57Sg' },
-
-{ id: 12, type: 'mc', q: '若原始資料有 6 筆，插入排序最多需要幾輪插入？',
-opts: ['4', '5', '6', '7'], ans: 'NQ==' },
-
-{ id: 13, type: 'mc', q: '插入排序中，當比較到哪一種情況時會停止往左比較？',
-opts: ['左邊的數字比 key 大', '左邊的數字比 key 小或等於 key', '還沒比較完', '還有未排序資料'],
-ans: '5bem6YKK55qE5pW45a2X5q+UIGtleSDlsI/miJbnrYnlupAg' },
-
-{ id: 14, type: 'mc', q: '下列哪一項不是插入排序的特點？',
-opts: ['排序過程是逐步完成', '每一輪只處理一個 key', '需要大量額外記憶體', '已排序區會逐漸擴大'],
-ans: '6ZyA6KaB5aSn6YeP6aGN5aSW6KiY5o++6auU' },
-
-// Fill
-
-{ id: 15, type: 'fill',
-q: '插入排序一開始，會先將第 ______ 個資料視為「已排序」。',
-ans: ['MQ==','5LiA','56ys5LiA5YCL','MeWApw=='] },
-
-{ id: 16, type: 'fill',
-q: '插入排序中，未排序區的第 ______ 個元素會被選為 key。',
-ans: ['MQ==','5LiA','56ys5LiA5YCL','MeWApw=='] },
-
-{ id: 17, type: 'fill',
-q: '插入排序在比較時，是由 ______ 往 ______ 方向進行比較。',
-ans: ['5Y+z5bel','5Y+zIOW3pQ==','5Y+z5b6A5bel','5Y+z5Yiw5bel'] },
-
-{ id: 18, type: 'fill',
-q: '當已排序區中的數字比 key ______ 時，就必須將該數字往右移。',
-ans: ['5aSn','Pg=='] },
-
-{ id: 19, type: 'fill',
-q: '插入排序完成一輪後，已排序區的資料筆數會增加 ______ 筆。',
-ans: ['MQ==','5LiA','MeesrQ=='] },
-
-{ id: 20, type: 'fill',
-q: '插入排序常用「整理 ______ 牌」來幫助理解演算法流程。',
-ans: ['5pKz5YWL','5pKz5YWL54mM'] }
-
-];
-
-        let quizState = {
-            student: { class: '', num: '', name: '' },
-            answers: {}, // id: value
-            startTime: null
-        };
-
-        // --- NAVIGATION ---
-        function switchTab(tab) {
-            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-            document.getElementById(`view-${tab}`).classList.remove('hidden');
-            
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('bg-yellow-400', 'text-indigo-900', 'shadow-md', 'scale-105');
-                btn.classList.add('text-indigo-100');
-            });
-            const activeBtn = document.getElementById(`btn-${tab}`);
-            activeBtn.classList.remove('text-indigo-100');
-            activeBtn.classList.add('bg-yellow-400', 'text-indigo-900', 'shadow-md', 'scale-105');
-
-            if(tab === 'play') initGame();
-            if(tab === 'learn') resetDemo();
+        // ==========================================
+        // 分頁切換
+        // ==========================================
+        function switchTab(tabId) {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`sec-${tabId}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            if(tabId === 'play') initGame();
         }
 
-        // --- HELPER RENDER CARD ---
-        function createCardHTML(val, type='normal', label='') {
-            let classes = "w-16 h-24 md:w-20 md:h-28 rounded-xl flex flex-col items-center justify-center font-black text-2xl md:text-3xl border-2 card-shadow transition-all-300 relative select-none ";
-            
-            if (type === 'sorted') classes += "bg-white border-emerald-500 text-emerald-700";
-            else if (type === 'unsorted') classes += "bg-slate-200 border-slate-400 text-slate-500";
-            else if (type === 'key') classes += "bg-yellow-100 border-yellow-500 text-yellow-700 z-20";
-            else if (type === 'comparing') classes += "bg-blue-100 border-blue-500 text-blue-700 scale-105";
-            else if (type === 'empty') classes += "bg-slate-100 border-dashed border-slate-300 opacity-50";
-            
-            return `
-                <div class="${classes}" id="card-${val}">
-                    <span>${val}</span>
-                    ${label ? `<span class="absolute -top-3 text-[10px] bg-slate-800 text-white px-2 py-0.5 rounded-full">${label}</span>` : ''}
-                </div>
-            `;
-        }
-
-        // --- SECTION 1: DEMO LOGIC ---
-        
-        function renderDemo() {
-            const container = document.getElementById('demo-container');
-            container.innerHTML = '';
-            
-            const { arr, i, j, key, status } = demoState;
-
-            arr.forEach((val, idx) => {
-                let type = 'unsorted';
-                let label = '';
-                
-                if (idx < i) type = 'sorted';
-                
-                if (status === 'PICK_KEY' && idx === i) {
-                    type = 'key';
-                    label = 'Key';
-                } else if (status === 'COMPARE') {
-                    if (idx === j) type = 'comparing';
-                    if (idx === j+1) type = 'key';
-                }
-
-                if (status === 'IDLE') {
-                    if(idx < i) type = 'sorted';
-                    else type = 'unsorted';
-                }
-
-                if (status !== 'IDLE' && status !== 'NEXT' && status !== 'PICK_KEY') {
-                    if (idx === j) { type = 'comparing'; label = '比較中'; }
-                    if (idx === j + 1 && arr[idx] === key) { type = 'key'; label = 'Key'; }
-                }
-
-                const div = document.createElement('div');
-                div.innerHTML = createCardHTML(val, type, label);
-                container.appendChild(div.firstElementChild);
-            });
-        }
-
-        function resetDemo() {
-            clearInterval(demoState.timer);
-            demoState = {
-                arr: [...DEMO_DATA],
-                i: 1, j: 0, key: null, status: 'IDLE', timer: null
-            };
-            document.getElementById('demo-play-btn').innerHTML = '<i data-lucide="play" class="w-4 h-4"></i> 播放';
-            document.getElementById('demo-message').innerText = "準備開始：原始資料 [ " + DEMO_DATA.join(", ") + " ]";
-            renderDemo();
-            lucide.createIcons();
-        }
-
-        function toggleDemoAutoPlay() {
-            if (demoState.timer) {
-                clearInterval(demoState.timer);
-                demoState.timer = null;
-                document.getElementById('demo-play-btn').innerHTML = '<i data-lucide="play" class="w-4 h-4"></i> 播放';
-            } else {
-                demoState.timer = setInterval(stepDemo, 1000); // 1 sec per step
-                document.getElementById('demo-play-btn').innerHTML = '<i data-lucide="pause" class="w-4 h-4"></i> 暫停';
-                stepDemo(); // run one immediately
-            }
-            lucide.createIcons();
-        }
-
-        function stepDemo() {
-            const msg = document.getElementById('demo-message');
-            const s = demoState;
-
-            if (s.status === 'DONE') {
-                clearInterval(s.timer);
-                s.timer = null;
-                document.getElementById('demo-play-btn').innerHTML = '<i data-lucide="rotate-ccw" class="w-4 h-4"></i> 重置';
-                lucide.createIcons();
-                return;
-            }
-
-            switch(s.status) {
-                case 'IDLE':
-                    if (s.i >= s.arr.length) {
-                        s.status = 'DONE';
-                        msg.innerText = "排序完成！所有綠色都已就位。";
-                        renderDemo();
-                        return;
-                    }
-                    s.status = 'PICK_KEY';
-                    s.key = s.arr[s.i];
-                    s.j = s.i - 1;
-                    msg.innerText = `第 ${s.i} 輪：拿出未排序第 1 個數字 ${s.key} 當作 Key`;
-                    break;
-
-                case 'PICK_KEY':
-                    s.status = 'COMPARE';
-                    msg.innerHTML = `準備開始比較：Key (${s.key}) vs 左邊的 ${s.arr[s.j]}`;
-                    break;
-
-                case 'COMPARE':
-                    if (s.j >= 0 && s.arr[s.j] > s.key) {
-                        msg.innerHTML = `<span class="text-blue-600">${s.arr[s.j]}</span> 比 Key (${s.key}) 大，往右移一格！`;
-                        s.status = 'SHIFT';
-                    } else {
-                        s.status = 'INSERT';
-                        msg.innerText = (s.j < 0) ? "比到最左邊了，插入！" : `遇到 ${s.arr[s.j]} 比 Key 小，插入在它後面！`;
-                    }
-                    break;
-
-                case 'SHIFT':
-                    s.arr[s.j + 1] = s.arr[s.j];
-                    s.arr[s.j] = s.key; 
-                    s.j--;
-                    s.status = 'COMPARE';
-                    break;
-
-                case 'INSERT':
-                    s.arr[s.j + 1] = s.key;
-                    s.i++;
-                    s.status = 'IDLE';
-                    msg.innerText = `插入完成。準備下一輪...`;
-                    break;
-            }
-            renderDemo();
-        }
-
-
-        // --- SECTION 2: GAME LOGIC ---
+        // ==========================================
+        // 互動遊戲模組 (模式A)
+        // ==========================================
+        let gameData = [8, 7, 9, 6, 5];
+        let sortedCount = 1;
+        let gameStats = { cmp: 0, move: 0, round: 1 };
 
         function initGame() {
-            gameState.arr = [...GAME_DATA];
-            gameState.sortedCount = 1;
-            gameState.currentKeyIdx = 1; 
-            gameState.errors = 0;
-            gameState.mode = gameState.mode || 'drag'; 
-            gameState.algoStatus = 'PICK';
-            gameState.compareIdx = 0;
-            gameState.j = 0;
-            gameState.key = 0;
-
-            document.getElementById('game-errors').innerText = 0;
-            document.getElementById('game-round').innerText = `1/${gameState.arr.length - 1}`;
-            document.getElementById('game-feedback').innerText = "";
-
+            gameData = [8, 7, 9, 6, 5];
+            sortedCount = 1;
+            gameStats = { cmp: 0, move: 0, round: 1 };
             renderGame();
         }
 
-        function setGameMode(mode) {
-            gameState.mode = mode;
-            document.querySelectorAll('.mode-btn').forEach(b => {
-                b.classList.remove('bg-indigo-600', 'text-white', 'ring-4', 'ring-indigo-300', 'border-indigo-800');
-                b.classList.add('bg-slate-200', 'text-slate-600', 'border-slate-400');
-            });
-            const active = document.getElementById(`mode-${mode}`);
-            active.classList.remove('bg-slate-200', 'text-slate-600', 'border-slate-400');
-            active.classList.add('bg-indigo-600', 'text-white', 'ring-4', 'ring-indigo-300', 'border-indigo-800');
-
-            if (mode === 'drag') {
-                document.getElementById('game-title').innerText = "拖曳挑戰";
-                document.getElementById('game-instruction').innerText = "點擊黃色 Key，再點擊綠色區域中的正確空位插入。";
-                document.getElementById('algo-controls').classList.add('hidden');
-            } else {
-                document.getElementById('game-title').innerText = "演算法操作";
-                document.getElementById('game-instruction').innerText = "扮演 CPU，一步步執行：比較 → 右移 → 插入。";
-                document.getElementById('algo-controls').classList.remove('hidden');
-            }
-            initGame();
-        }
-
         function renderGame() {
-            const container = document.getElementById('game-container');
-            container.innerHTML = '';
-
-            if (gameState.sortedCount >= gameState.arr.length) {
-                container.innerHTML = `<div class="text-center"><div class="text-6xl animate-bounce">🎉</div></div>`;
-                showWinOverlay();
-                return;
-            }
-
-            const keyVal = gameState.arr[gameState.sortedCount]; 
-            const arr = gameState.arr;
-
-            if (gameState.mode === 'drag') {
-                let sortedHTML = '<div class="flex items-center bg-emerald-50 p-3 rounded-xl border border-emerald-200 gap-1">';
-                sortedHTML += `<div onclick="handleGapClick(-1)" class="w-4 h-24 hover:bg-yellow-200 cursor-pointer rounded transition-colors border-2 border-transparent hover:border-yellow-400 gap-slot" data-idx="-1"></div>`;
-
-                for(let i=0; i<gameState.sortedCount; i++) {
-                    sortedHTML += createCardHTML(arr[i], 'sorted');
-                    sortedHTML += `<div onclick="handleGapClick(${i})" class="w-4 h-24 hover:bg-yellow-200 cursor-pointer rounded transition-colors border-2 border-transparent hover:border-yellow-400 gap-slot" data-idx="${i}"></div>`;
-                }
-                sortedHTML += '</div>';
-
-                let unsortedHTML = '<div class="flex items-center gap-2 border-l-4 border-slate-300 pl-4">';
-                unsortedHTML += `<div class="cursor-grab hover:scale-105 transition-transform" onclick="highlightGaps()">${createCardHTML(keyVal, 'key', 'KEY')}</div>`;
-                
-                for(let i=gameState.sortedCount+1; i<arr.length; i++) {
-                    unsortedHTML += createCardHTML(arr[i], 'unsorted');
-                }
-                unsortedHTML += '</div>';
-
-                container.innerHTML = sortedHTML + unsortedHTML;
-            } 
-            else {
-                let html = '';
-                arr.forEach((val, idx) => {
-                    let type = 'unsorted';
-                    let label = '';
-                    if (idx < gameState.sortedCount) type = 'sorted';
-                    if (gameState.algoStatus === 'PICK' && idx === gameState.sortedCount) {
-                        type = 'key'; label = 'Key?';
-                    }
-                    else if (gameState.algoStatus !== 'PICK') {
-                        if (idx === gameState.sortedCount) type = 'key';
-                        if (idx === gameState.compareIdx && gameState.algoStatus === 'COMPARE') type = 'comparing';
-                    }
-                    html += createCardHTML(val, type, label);
-                });
-                container.innerHTML = html;
-            }
-        }
-
-        function highlightGaps() {
-            document.querySelectorAll('.gap-slot').forEach(el => {
-                el.classList.add('bg-yellow-100', 'animate-pulse');
+            const display = document.getElementById('sort-display');
+            display.innerHTML = '';
+            gameData.forEach((val, idx) => {
+                const div = document.createElement('div');
+                div.className = `w-16 h-20 flex items-center justify-center text-2xl font-black rounded-xl border-4 shadow-md sort-item ${idx < sortedCount ? 'bg-green-100 border-green-400 text-green-700' : 'bg-white border-gray-200 text-gray-400'}`;
+                div.innerText = val;
+                if(idx === sortedCount) div.classList.add('ring-4', 'ring-pink-400', 'animate-pulse', 'bg-pink-50', 'text-pink-600');
+                display.appendChild(div);
             });
-            document.getElementById('game-feedback').innerText = "現在點擊左邊綠色區域中的空隙來插入！";
-        }
-
-        function handleGapClick(gapIndex) {
-            const keyVal = gameState.arr[gameState.sortedCount];
-            const sortedSubArr = gameState.arr.slice(0, gameState.sortedCount);
             
-            let correctIndex = 0;
-            for(let i=0; i<sortedSubArr.length; i++) {
-                if(keyVal > sortedSubArr[i]) {
-                    correctIndex = i + 1;
-                }
-            }
-            const userChosenIndex = gapIndex + 1;
+            document.getElementById('stat-cmp').innerText = gameStats.cmp;
+            document.getElementById('stat-move').innerText = gameStats.move;
+            document.getElementById('stat-round').innerText = gameStats.round;
 
-            if (userChosenIndex === correctIndex) {
-                playFeedback(true, "正確！插入位置完美！");
-                gameState.arr.splice(gameState.sortedCount, 1);
-                gameState.arr.splice(correctIndex, 0, keyVal);
-                gameState.sortedCount++;
-                document.getElementById('game-round').innerText = `${Math.min(gameState.sortedCount, gameState.arr.length-1)}/${gameState.arr.length-1}`;
-                setTimeout(() => { renderGame(); }, 800);
+            const controls = document.getElementById('game-controls');
+            if(sortedCount < gameData.length) {
+                controls.innerHTML = `<div class="flex gap-2">${Array.from({length: sortedCount + 1}).map((_, i) => `<button onclick="playInsert(${i})" class="bg-indigo-500 text-white w-10 h-10 rounded-lg font-bold hover:bg-indigo-400 shadow-md">${i}</button>`).join('')}</div>`;
             } else {
-                gameState.errors++;
-                document.getElementById('game-errors').innerText = gameState.errors;
-                if (userChosenIndex < correctIndex) {
-                    playFeedback(false, `錯誤！${keyVal} 比左邊的某些數字還大喔！`);
-                } else {
-                    playFeedback(false, `錯誤！${keyVal} 比右邊的某些數字還小喔！`);
-                }
+                controls.innerHTML = `<button onclick="initGame()" class="bg-blue-500 text-white px-6 py-2 rounded-xl font-bold">重新挑戰</button>`;
             }
         }
 
-        function algoAction(action) {
-            const feedback = document.getElementById('game-feedback');
-            const arr = gameState.arr;
-            
-            if (gameState.algoStatus === 'PICK') {
-                gameState.key = arr[gameState.sortedCount]; 
-                gameState.j = gameState.sortedCount - 1;    
-                gameState.algoStatus = 'COMPARE';
+        function playInsert(pos) {
+            const key = gameData[sortedCount];
+            let correctPos = 0;
+            for(let i = 0; i < sortedCount; i++) {
+                if(gameData[i] < key) correctPos = i + 1;
+            }
+
+            if(pos === correctPos) {
+                gameStats.cmp += sortedCount;
+                gameStats.move += (sortedCount - pos);
+                gameData.splice(sortedCount, 1);
+                gameData.splice(pos, 0, key);
+                sortedCount++;
+                gameStats.round++;
+                document.getElementById('game-feedback').innerText = "✔️ 正確！插入到位置 " + pos;
                 renderGame();
-                if (action !== 'compare') {
-                    playFeedback(false, "第一步必須先「比較」！");
-                    return;
-                }
+            } else {
+                document.getElementById('game-feedback').innerText = "❌ 這裡是索引 " + pos + "，位置不對喔！";
             }
-
-            const j = gameState.j;
-            const key = gameState.key;
-
-            if (action === 'compare') {
-                gameState.compareIdx = j; 
-                renderGame();
-                if (j >= 0 && arr[j] > key) {
-                    feedback.innerText = `${arr[j]} > ${key}，應該右移！`;
-                    gameState.expectedAction = 'shift';
-                } else {
-                    feedback.innerText = (j<0) ? "比到頭了，插入！" : `${arr[j]} <= ${key}，找到位置，插入！`;
-                    gameState.expectedAction = 'insert';
-                }
-            }
-            else if (action === 'shift') {
-                if (gameState.expectedAction === 'shift') {
-                     arr[j+1] = arr[j];
-                     arr[j] = key; 
-                     gameState.j--;
-                     gameState.algoStatus = 'COMPARE'; 
-                     playFeedback(true, "右移成功！再比下一個。");
-                     renderGame();
-                     gameState.expectedAction = null; 
-                } else {
-                    playFeedback(false, "不能右移！");
-                    gameState.errors++;
-                }
-            }
-            else if (action === 'insert') {
-                if (gameState.expectedAction === 'insert') {
-                    arr[j+1] = key; 
-                    gameState.sortedCount++;
-                    gameState.algoStatus = 'PICK';
-                    document.getElementById('game-round').innerText = `${Math.min(gameState.sortedCount, gameState.arr.length-1)}/${gameState.arr.length-1}`;
-                    playFeedback(true, "插入成功！下一輪。");
-                    renderGame();
-                } else {
-                    playFeedback(false, "還沒找到正確位置！");
-                    gameState.errors++;
-                }
-            }
-            document.getElementById('game-errors').innerText = gameState.errors;
         }
 
-        function playFeedback(isSuccess, text) {
-            const el = document.getElementById('game-feedback');
-            el.innerText = text;
-            el.className = isSuccess ? "mt-4 text-center font-bold text-lg h-8 text-emerald-600 animate-pulse" : "mt-4 text-center font-bold text-lg h-8 text-red-500 animate-shake";
-        }
-
-        function showWinOverlay() {
-            const overlay = document.getElementById('win-overlay');
-            overlay.classList.remove('hidden');
-            overlay.classList.add('flex');
-            
-            const err = gameState.errors;
-            document.getElementById('result-errors').innerText = err;
-            let rank = "C";
-            if(err === 0) rank = "S 級大師";
-            else if(err <= 2) rank = "A 級高手";
-            else if(err <= 5) rank = "B 級玩家";
-            document.getElementById('result-rank').innerText = rank;
-        }
-
-        function closeOverlay() {
-            const overlay = document.getElementById('win-overlay');
-            overlay.classList.add('hidden');
-            overlay.classList.remove('flex');
-        }
-
-        // --- QUIZ LOGIC ---
-
-        function startQuiz() {
-            const c = document.getElementById('std-class').value;
-            const n = document.getElementById('std-num').value;
-            const nm = document.getElementById('std-name').value;
-
-            if(!c || !n || !nm) {
-                alert("請完整填寫 班級、座號、姓名！");
-                return;
-            }
-
-            quizState.student = { class: c, num: n, name: nm };
-            quizState.startTime = new Date();
-            
-            document.getElementById('display-std-info').innerText = `${c}班 ${n}號 ${nm}`;
-            
-            // Switch view
-            document.getElementById('student-login').classList.add('hidden');
-            document.getElementById('quiz-content').classList.remove('hidden');
-
-            renderQuiz();
-        }
+        // ==========================================
+        // 測驗模組與 GAS 送出
+        // ==========================================
+        const questions = [
+            { id: 1, type: 'tf', text: "插入排序法會先將資料分成「已排序」與「未排序」兩個區域。" },
+            { id: 2, type: 'tf', text: "插入排序在每一輪排序時，會從「未排序區的最後一個」開始比較。" },
+            { id: 3, type: 'tf', text: "在插入排序中，已排序區的資料在每一輪結束後都保持由小到大的順序。" },
+            { id: 4, type: 'tf', text: "插入排序就像整理撲克牌，一次只處理一張牌。" },
+            { id: 5, type: 'tf', text: "插入排序法在比較時，是由左往右進行比較。" },
+            { id: 6, type: 'tf', text: "插入排序完成排序時，一共需要 N 次插入動作（N 為資料筆數）。" },
+            { id: 7, type: 'mc', text: "插入排序中，每一輪要拿來插入的數值稱為什麼？", opts: {a:"pivot", b:"key", c:"index", d:"max"} },
+            { id: 8, type: 'mc', text: "插入排序中，key 會與哪一個區域的資料進行比較？", opts: {a:"未排序區", b:"全部資料", c:"已排序區", d:"隨機選擇"} },
+            { id: 9, type: 'mc', text: "若要進行「由小到大」的插入排序，當左邊的數字比 key 大時，正確的動作是？", opts: {a:"直接交換", b:"忽略不管", c:"將左邊的數字往右移", d:"將 key 丟掉"} },
+            { id: 10, type: 'mc', text: "插入排序最符合下列哪一個生活情境？", opts: {a:"洗牌", b:"抽籤", c:"整理撲克牌手牌", d:"擲骰子"} },
+            { id: 11, type: 'mc', text: "插入排序每一輪排序完成後，下列哪一項是正確的？", opts: {a:"未排序區變大", b:"已排序區變小", c:"已排序區增加一個元素", d:"資料順序會亂掉"} },
+            { id: 12, type: 'mc', text: "若原始資料有 6 筆，插入排序最多需要幾輪插入？", opts: {a:"4", b:"5", c:"6", d:"7"} },
+            { id: 13, type: 'mc', text: "插入排序中，當比較到哪一種情況時會停止往左比較？", opts: {a:"左邊的數字比 key 大", b:"左邊的數字比 key 小或等於 key", c:"還沒比較完", d:"還有未排序資料"} },
+            { id: 14, type: 'mc', text: "下列哪一項不是插入排序的特點？", opts: {a:"排序過程是逐步完成", b:"每一輪只處理一個 key", c:"需要大量額外記憶體", d:"已排序區會逐漸擴大"} }
+        ];
 
         function renderQuiz() {
-            const container = document.getElementById('quiz-questions-container');
-            container.innerHTML = '';
-
-            // Group questions by type for headings
-            const tfQuestions = QUIZ_DATA.filter(q => q.type === 'tf');
-            const mcQuestions = QUIZ_DATA.filter(q => q.type === 'mc');
-            const fillQuestions = QUIZ_DATA.filter(q => q.type === 'fill');
-
-            // Render True/False
-            container.innerHTML += `<div class="bg-indigo-50 p-4 rounded-xl border-l-4 border-indigo-500"><h3 class="font-bold text-xl text-indigo-900">一、是非題 (每題5分)</h3></div>`;
-            tfQuestions.forEach((q, idx) => {
-                container.innerHTML += `
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                        <div class="font-bold text-lg mb-4 text-slate-800"><span class="text-indigo-600 mr-2">${q.id}.</span> ${q.q}</div>
-                        <div class="flex gap-6">
-                            <label class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-slate-50 w-32 border hover:border-indigo-300">
-                                <input type="radio" name="q-${q.id}" value="T" class="w-6 h-6 text-indigo-600"> <span class="font-bold text-emerald-600">O 是</span>
-                            </label>
-                            <label class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-slate-50 w-32 border hover:border-indigo-300">
-                                <input type="radio" name="q-${q.id}" value="F" class="w-6 h-6 text-indigo-600"> <span class="font-bold text-red-500">X 否</span>
-                            </label>
-                        </div>
-                    </div>
-                `;
-            });
-
-            // Render MC
-            container.innerHTML += `<div class="bg-indigo-50 p-4 rounded-xl border-l-4 border-indigo-500 mt-8"><h3 class="font-bold text-xl text-indigo-900">二、選擇題 (每題5分)</h3></div>`;
-            mcQuestions.forEach((q, idx) => {
-                let optsHTML = '';
-                q.opts.forEach(opt => {
-                    optsHTML += `
-                        <label class="flex items-center gap-3 cursor-pointer p-3 rounded-lg hover:bg-slate-50 border border-transparent hover:border-indigo-200 transition-colors">
-                            <input type="radio" name="q-${q.id}" value="${opt}" class="w-5 h-5 text-indigo-600">
-                            <span class="text-slate-700">${opt}</span>
-                        </label>
-                    `;
-                });
-                container.innerHTML += `
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                        <div class="font-bold text-lg mb-4 text-slate-800"><span class="text-indigo-600 mr-2">${q.id}.</span> ${q.q}</div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                            ${optsHTML}
-                        </div>
-                    </div>
-                `;
-            });
-
-            // Render Fill
-            container.innerHTML += `<div class="bg-indigo-50 p-4 rounded-xl border-l-4 border-indigo-500 mt-8"><h3 class="font-bold text-xl text-indigo-900">三、填空題 (每題5分)</h3></div>`;
-            fillQuestions.forEach((q, idx) => {
-                container.innerHTML += `
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                        <div class="font-bold text-lg mb-4 text-slate-800"><span class="text-indigo-600 mr-2">${q.id}.</span> ${q.q}</div>
-                        <div>
-                            <input type="text" name="q-${q.id}" placeholder="請輸入答案" class="w-full md:w-1/2 p-3 border-2 border-slate-300 rounded-lg focus:border-indigo-500 outline-none">
-                        </div>
-                    </div>
-                `;
+            const container = document.getElementById('quiz-list');
+            questions.forEach(q => {
+                const div = document.createElement('div');
+                div.className = "quiz-block";
+                let html = `<p class="text-xl font-black text-gray-700 mb-6"><span class="bg-indigo-100 text-indigo-600 px-3 py-1 rounded-full mr-2 text-sm">${q.id}</span> ${q.text}</p>`;
+                
+                if(q.type === 'tf') {
+                    html += `<div class="flex gap-4">
+                        <label class="flex-1 cursor-pointer"><input type="radio" name="q${q.id}" value="v_t"><div class="opt-ui p-4 rounded-2xl bg-gray-50 font-bold border-2 text-center transition hover:bg-white hover:border-pink-300">✔ 是</div></label>
+                        <label class="flex-1 cursor-pointer"><input type="radio" name="q${q.id}" value="v_f"><div class="opt-ui p-4 rounded-2xl bg-gray-50 font-bold border-2 text-center transition hover:bg-white hover:border-pink-300">✘ 否</div></label>
+                    </div>`;
+                } else {
+                    html += `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        ${Object.entries(q.opts).map(([k,v]) => `
+                            <label class="cursor-pointer"><input type="radio" name="q${q.id}" value="v_${k}"><div class="opt-ui p-4 rounded-2xl bg-gray-50 font-bold border-2 transition hover:bg-white hover:border-pink-300">${k.toUpperCase()}. ${v}</div></label>
+                        `).join('')}
+                    </div>`;
+                }
+                div.innerHTML = html;
+                container.appendChild(div);
             });
         }
 
-        function submitQuiz() {
-            // Collect answers
-            let score = 0;
-            let wrongList = [];
-            
-            QUIZ_DATA.forEach(q => {
-                let userAns = '';
-                if (q.type === 'fill') {
-                    const el = document.querySelector(`input[name="q-${q.id}"]`);
-                    userAns = el ? el.value.trim() : '';
+        async function handleSubmit() {
+            const cls = document.getElementById('stu-class').value;
+            const sno = document.getElementById('stu-no').value;
+            const name = document.getElementById('stu-name').value;
+
+            if(!cls || !sno || !name) { alert("請填寫班級、座號與姓名！"); return; }
+
+            let correctCount = 0;
+            let results = [];
+            for(let i=1; i<=14; i++) {
+                const sel = document.querySelector(`input[name="q${i}"]:checked`);
+                if(!sel) { alert(`第 ${i} 題還沒寫喔！`); return; }
+                if(sel.value === _MAP_[_O_[`a${i}`]]) {
+                    correctCount++;
+                    results.push(`Q${i}:✔️`);
                 } else {
-                    const el = document.querySelector(`input[name="q-${q.id}"]:checked`);
-                    userAns = el ? el.value : '';
+                    results.push(`Q${i}:❌`);
                 }
-
-                quizState.answers[q.id] = userAns;
-
-                // Check correctness
-                let isCorrect = false;
-                if (q.type === 'tf') {
-                    isCorrect = (userAns === decodeAns(q.ans));
-                } else if (q.type === 'mc') {
-                    isCorrect = (userAns === decodeAns(q.ans));
-                } else if (q.type === 'fill') {
-                    // Normalize user ans and correct ans array for loose matching
-                    const normalizedUser = userAns.replace(/\s+/g, '').toLowerCase();
-                    isCorrect = q.ans.some(a => a.replace(/\s+/g, '').toLowerCase() === normalizedUser);
-                }
-
-                if (isCorrect) {
-                    score += 5;
-                } else {
-                    // Prepare wrong list info
-                    let correctDisplay = Array.isArray(q.ans) ? q.ans[0] : (q.ans === 'T' ? 'O 是' : (q.ans === 'F' ? 'X 否' : q.ans));
-                    let rationale = q.rationale || '';
-                    wrongList.push({
-                        id: q.id,
-                        q: q.q,
-                        user: userAns || '(未作答)',
-                        correct: correctDisplay,
-                        rationale: rationale
-                    });
-                }
-            });
-
-            // Show Results
-            document.getElementById('final-score').innerText = score;
-            
-            // Generate Code
-            const timeStr = quizState.startTime.toLocaleString('zh-TW');
-            const std = quizState.student;
-            const codeObj = {
-                u: `${std.class}-${std.num}-${std.name}`,
-                s: score,
-                t: timeStr,
-                hash: btoa(encodeURIComponent(`${std.name}-${score}-${Math.random()}`)).substring(0, 10) // Fake hash for visual
-            };
-            const resultString = `【測驗結果憑證】\n姓名：${std.class}班 ${std.num}號 ${std.name}\n分數：${score} 分\n時間：${timeStr}\n驗證碼：${codeObj.hash}`;
-            
-            document.getElementById('result-code-box').innerText = resultString;
-
-            // Render Wrong Answers
-            const wrongContainer = document.getElementById('wrong-answers-list');
-            wrongContainer.innerHTML = '';
-            if (wrongList.length === 0) {
-                wrongContainer.innerHTML = '<div class="text-emerald-600 font-bold text-center">太神了！全對！💯</div>';
-            } else {
-                wrongList.forEach(w => {
-                    wrongContainer.innerHTML += `
-                        <div class="bg-red-50 p-4 rounded-lg border border-red-200">
-                            <div class="font-bold text-slate-800 mb-1">第 ${w.id} 題：${w.q}</div>
-                            <div class="text-sm text-red-600">你的回答：${w.user}</div>
-                            <div class="text-sm text-emerald-600 font-bold">正確答案：${w.correct}</div>
-                            ${w.rationale ? `<div class="text-xs text-slate-500 mt-1 bg-white p-2 rounded">解析：${w.rationale}</div>` : ''}
-                        </div>
-                    `;
-                });
             }
 
-            document.getElementById('quiz-result').classList.remove('hidden');
-            document.getElementById('quiz-result').classList.add('flex');
-            sendToGAS(score);
-        }
-        function sendToGAS(score){
+            const score = Math.round((correctCount/14)*100);
+            const detailStr = results.join(' ');
 
-const std = quizState.student;
+            // UI 狀態切換
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true;
+            btn.innerText = "資料上傳中...";
 
-const data = {
-timestamp:new Date().toLocaleString("zh-TW"),
-className:std.class,
-seatNum:std.num,
-studentName:std.name,
-score:score,
-duration:Math.floor((new Date()-quizState.startTime)/1000)
-};
-
-fetch("https://script.google.com/macros/s/AKfycbxUzcQq9P8ypDtxCzKLa5yftm-ddbscjWM_9w6STvd05D9et9GF9SroLW0_xwk7L-GDyA/exec",{
-method:"POST",
-mode:"no-cors",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify(data)
-});
-
-}
-        function closeQuizResult() {
-             document.getElementById('quiz-result').classList.add('hidden');
-             document.getElementById('quiz-result').classList.remove('flex');
-        }
-
-        function copyResultCode() {
-            const text = document.getElementById('result-code-box').innerText;
-            navigator.clipboard.writeText(text).then(() => {
-                alert("已複製！請貼給老師。");
+            // 送往 GAS
+            const params = new URLSearchParams({
+                className: cls, seatNumber: sno, studentName: name,
+                score: score, details: detailStr, sortType: '插入排序_完整教學版'
             });
+
+            try {
+                // 使用 no-cors 模式發送，避免跨域報錯
+                await fetch(GAS_URL, { method: 'POST', body: params, mode: 'no-cors' });
+                showFinalResult(score, name, detailStr);
+            } catch (e) {
+                console.error(e);
+                showFinalResult(score, name, detailStr); // 失敗仍顯示本地結果
+            }
         }
 
-        // Start Up
-        renderDemo();
+        function showFinalResult(score, name, details) {
+            const modal = document.getElementById('modal');
+            const emoji = document.getElementById('modalEmoji');
+            const title = document.getElementById('modalTitle');
+            const msg = document.getElementById('modalMsg');
+
+            if(score === 100) { emoji.innerText="👑"; title.innerText="完美通關！"; }
+            else if(score >= 60) { emoji.innerText="⭐"; title.innerText="不錯喔！"; }
+            else { emoji.innerText="💪"; title.innerText="再接再厲！"; }
+
+            msg.innerText = `${name} 同學你好！\n你的分數是：${score} 分\n\n${details}`;
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() { document.getElementById('modal').classList.add('hidden'); location.reload(); }
+
+        window.onload = () => {
+            renderQuiz();
+            switchTab('learn');
+        };
     </script>
 </body>
 </html>
