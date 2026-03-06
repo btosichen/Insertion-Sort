@@ -30,7 +30,11 @@
         .unsorted-bg { background-color: #F3F4F6; border: 2px dashed #9CA3AF; }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen text-slate-800 selection:bg-yellow-200">
+<body class="min-h-screen text-slate-800 selection:bg-yellow-200"
+style="
+background:
+linear-gradient(135deg,#60a5fa 0%,#818cf8 30%,#c084fc 60%,#f472b6 100%);
+background-attachment: fixed;">
 
     <!-- Navbar -->
     <nav class="bg-indigo-600 text-white p-4 sticky top-0 z-50 shadow-lg border-b-4 border-indigo-800">
@@ -318,32 +322,77 @@
 
         // --- QUIZ DATA ---
         const QUIZ_DATA = [
-            // True/False
-            { id: 1, type: 'tf', q: '插入排序法會先將資料分成「已排序」與「未排序」兩個區域。', ans: 'T', rationale: '正確。這是插入排序的基本概念。' },
-            { id: 2, type: 'tf', q: '插入排序在每一輪排序時，會從「未排序區的最後一個」開始比較。', ans: 'F', rationale: '錯誤。是從「未排序區的第一個」開始。' },
-            { id: 3, type: 'tf', q: '在插入排序中，已排序區的資料在每一輪結束後都保持由小到大的順序。', ans: 'T', rationale: '正確。已排序區始終保持有序。' },
-            { id: 4, type: 'tf', q: '插入排序就像整理撲克牌，一次只處理一張牌。', ans: 'T', rationale: '正確。這是最常用的類比。' },
-            { id: 5, type: 'tf', q: '插入排序法在比較時，是由左往右進行比較。', ans: 'F', rationale: '錯誤。一般是由右往左（從已排序區的最大值開始比）。' },
-            { id: 6, type: 'tf', q: '插入排序完成排序時，一共需要 N 次插入動作（N 為資料筆數）。', ans: 'F', rationale: '錯誤。第1個視為已排序，故只需 N-1 輪。' },
-            
-            // Choice
-            { id: 7, type: 'mc', q: '插入排序中，每一輪要拿來插入的數值稱為什麼？', opts: ['pivot', 'key', 'index', 'max'], ans: 'key' },
-            { id: 8, type: 'mc', q: '插入排序中，key 會與哪一個區域的資料進行比較？', opts: ['未排序區', '全部資料', '已排序區', '隨機選擇'], ans: '已排序區' },
-            { id: 9, type: 'mc', q: '若要進行「由小到大」的插入排序，當左邊的數字比 key 大時，正確的動作是？', opts: ['直接交換', '忽略不管', '將左邊的數字往右移', '將 key 丟掉'], ans: '將左邊的數字往右移' },
-            { id: 10, type: 'mc', q: '插入排序最符合下列哪一個生活情境？', opts: ['洗牌', '抽籤', '整理撲克牌手牌', '擲骰子'], ans: '整理撲克牌手牌' },
-            { id: 11, type: 'mc', q: '插入排序每一輪排序完成後，下列哪一項是正確的？', opts: ['未排序區變大', '已排序區變小', '已排序區增加一個元素', '資料順序會亂掉'], ans: '已排序區增加一個元素' },
-            { id: 12, type: 'mc', q: '若原始資料有 6 筆，插入排序最多需要幾輪插入？', opts: ['4', '5', '6', '7'], ans: '5' },
-            { id: 13, type: 'mc', q: '插入排序中，當比較到哪一種情況時會停止往左比較？', opts: ['左邊的數字比 key 大', '左邊的數字比 key 小或等於 key', '還沒比較完', '還有未排序資料'], ans: '左邊的數字比 key 小或等於 key' },
-            { id: 14, type: 'mc', q: '下列哪一項不是插入排序的特點？', opts: ['排序過程是逐步完成', '每一輪只處理一個 key', '需要大量額外記憶體', '已排序區會逐漸擴大'], ans: '需要大量額外記憶體' },
 
-            // Fill
-            { id: 15, type: 'fill', q: '插入排序一開始，會先將第 ______ 個資料視為「已排序」。', ans: ['1', '一', '第一個', '1個'] },
-            { id: 16, type: 'fill', q: '插入排序中，未排序區的第 ______ 個元素會被選為 key。', ans: ['1', '一', '第一個', '1個'] },
-            { id: 17, type: 'fill', q: '插入排序在比較時，是由 ______ 往 ______ 方向進行比較。（填方向，例如：上 下）', ans: ['右左', '右 左', '右往左', '右到左', '後前', '後 前'] },
-            { id: 18, type: 'fill', q: '當已排序區中的數字比 key ______ 時，就必須將該數字往右移。', ans: ['大', 'bigger', '>'] },
-            { id: 19, type: 'fill', q: '插入排序完成一輪後，已排序區的資料筆數會增加 ______ 筆。', ans: ['1', '一', '1筆'] },
-            { id: 20, type: 'fill', q: '插入排序常用「整理 ______ 牌」來幫助理解演算法流程。', ans: ['撲克', '撲克牌'] }
-        ];
+{ id: 1, type: 'tf', q: '插入排序法會先將資料分成「已排序」與「未排序」兩個區域。', ans: 'VA==', rationale: '正確。這是插入排序的基本概念。' },
+
+{ id: 2, type: 'tf', q: '插入排序在每一輪排序時，會從「未排序區的最後一個」開始比較。', ans: 'Rg==', rationale: '錯誤。是從「未排序區的第一個」開始。' },
+
+{ id: 3, type: 'tf', q: '在插入排序中，已排序區的資料在每一輪結束後都保持由小到大的順序。', ans: 'VA==', rationale: '正確。已排序區始終保持有序。' },
+
+{ id: 4, type: 'tf', q: '插入排序就像整理撲克牌，一次只處理一張牌。', ans: 'VA==', rationale: '正確。這是最常用的類比。' },
+
+{ id: 5, type: 'tf', q: '插入排序法在比較時，是由左往右進行比較。', ans: 'Rg==', rationale: '錯誤。一般是由右往左。' },
+
+{ id: 6, type: 'tf', q: '插入排序完成排序時，一共需要 N 次插入動作（N 為資料筆數）。', ans: 'Rg==', rationale: '錯誤。只需要 N-1 輪。' },
+
+// Choice
+
+{ id: 7, type: 'mc', q: '插入排序中，每一輪要拿來插入的數值稱為什麼？',
+opts: ['pivot', 'key', 'index', 'max'], ans: 'a2V5' },
+
+{ id: 8, type: 'mc', q: '插入排序中，key 會與哪一個區域的資料進行比較？',
+opts: ['未排序區', '全部資料', '已排序區', '隨機選擇'], ans: '5bey5o6S5Yy6' },
+
+{ id: 9, type: 'mc', q: '若要進行「由小到大」的插入排序，當左邊的數字比 key 大時，正確的動作是？',
+opts: ['直接交換', '忽略不管', '將左邊的數字往右移', '將 key 丟掉'],
+ans: '5bCG5bem6YKK55qE5pW45a2X5b6A5Y+z56e7' },
+
+{ id: 10, type: 'mc', q: '插入排序最符合下列哪一個生活情境？',
+opts: ['洗牌', '抽籤', '整理撲克牌手牌', '擲骰子'],
+ans: '5pW05o6S5pKz5YWL54mM5omL54mM' },
+
+{ id: 11, type: 'mc', q: '插入排序每一輪排序完成後，下列哪一項是正確的？',
+opts: ['未排序區變大', '已排序區變小', '已排序區增加一個元素', '資料順序會亂掉'],
+ans: '5bey5o6S5Yy65aKe5Yqg5LiA5YCL5YWD57Sg' },
+
+{ id: 12, type: 'mc', q: '若原始資料有 6 筆，插入排序最多需要幾輪插入？',
+opts: ['4', '5', '6', '7'], ans: 'NQ==' },
+
+{ id: 13, type: 'mc', q: '插入排序中，當比較到哪一種情況時會停止往左比較？',
+opts: ['左邊的數字比 key 大', '左邊的數字比 key 小或等於 key', '還沒比較完', '還有未排序資料'],
+ans: '5bem6YKK55qE5pW45a2X5q+UIGtleSDlsI/miJbnrYnlupAg' },
+
+{ id: 14, type: 'mc', q: '下列哪一項不是插入排序的特點？',
+opts: ['排序過程是逐步完成', '每一輪只處理一個 key', '需要大量額外記憶體', '已排序區會逐漸擴大'],
+ans: '6ZyA6KaB5aSn6YeP6aGN5aSW6KiY5o++6auU' },
+
+// Fill
+
+{ id: 15, type: 'fill',
+q: '插入排序一開始，會先將第 ______ 個資料視為「已排序」。',
+ans: ['MQ==','5LiA','56ys5LiA5YCL','MeWApw=='] },
+
+{ id: 16, type: 'fill',
+q: '插入排序中，未排序區的第 ______ 個元素會被選為 key。',
+ans: ['MQ==','5LiA','56ys5LiA5YCL','MeWApw=='] },
+
+{ id: 17, type: 'fill',
+q: '插入排序在比較時，是由 ______ 往 ______ 方向進行比較。',
+ans: ['5Y+z5bel','5Y+zIOW3pQ==','5Y+z5b6A5bel','5Y+z5Yiw5bel'] },
+
+{ id: 18, type: 'fill',
+q: '當已排序區中的數字比 key ______ 時，就必須將該數字往右移。',
+ans: ['5aSn','Pg=='] },
+
+{ id: 19, type: 'fill',
+q: '插入排序完成一輪後，已排序區的資料筆數會增加 ______ 筆。',
+ans: ['MQ==','5LiA','MeesrQ=='] },
+
+{ id: 20, type: 'fill',
+q: '插入排序常用「整理 ______ 牌」來幫助理解演算法流程。',
+ans: ['5pKz5YWL','5pKz5YWL54mM'] }
+
+];
 
         let quizState = {
             student: { class: '', num: '', name: '' },
@@ -831,9 +880,9 @@
                 // Check correctness
                 let isCorrect = false;
                 if (q.type === 'tf') {
-                    isCorrect = (userAns === q.ans);
+                    isCorrect = (userAns === decodeAns(q.ans));
                 } else if (q.type === 'mc') {
-                    isCorrect = (userAns === q.ans);
+                    isCorrect = (userAns === decodeAns(q.ans));
                 } else if (q.type === 'fill') {
                     // Normalize user ans and correct ans array for loose matching
                     const normalizedUser = userAns.replace(/\s+/g, '').toLowerCase();
@@ -892,8 +941,31 @@
 
             document.getElementById('quiz-result').classList.remove('hidden');
             document.getElementById('quiz-result').classList.add('flex');
+            sendToGAS(score);
         }
+        function sendToGAS(score){
 
+const std = quizState.student;
+
+const data = {
+timestamp:new Date().toLocaleString("zh-TW"),
+className:std.class,
+seatNum:std.num,
+studentName:std.name,
+score:score,
+duration:Math.floor((new Date()-quizState.startTime)/1000)
+};
+
+fetch("https://script.google.com/macros/s/AKfycbxUzcQq9P8ypDtxCzKLa5yftm-ddbscjWM_9w6STvd05D9et9GF9SroLW0_xwk7L-GDyA/exec",{
+method:"POST",
+mode:"no-cors",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify(data)
+});
+
+}
         function closeQuizResult() {
              document.getElementById('quiz-result').classList.add('hidden');
              document.getElementById('quiz-result').classList.remove('flex');
